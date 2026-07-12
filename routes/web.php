@@ -4,7 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskAssignmentController;
-
+use App\Http\Controllers\ProjectController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -22,7 +22,15 @@ Route::middleware('auth')->group(function () {
         [TaskAssignmentController::class, 'destroy']
     );
 
+    // Project routes
+    Route::get('/projects/{project}',
+        [ProjectController::class, 'show']
+    );
+
+    Route::resource('projects', ProjectController::class);
 });
+
+
 // member dashboard route
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -47,6 +55,24 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
     // Route::get('/users', [UserController::class, 'index'])->name('users.index');
     
+});
+
+Route::middleware('auth')->group(function () {
+
+    Route::resource('tasks', TaskController::class);
+
+    Route::post('/tasks/{task}/assign',
+        [TaskAssignmentController::class, 'store']
+    );
+
+    Route::delete('/task-assignment/{assignment}',
+        [TaskAssignmentController::class, 'destroy']
+    );
+
+    Route::get('/projects/{project}',
+        [ProjectController::class, 'show']
+    );
+
 });
 
 require __DIR__.'/auth.php';
