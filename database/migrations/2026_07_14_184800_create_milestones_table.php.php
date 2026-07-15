@@ -12,15 +12,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('milestones', function (Blueprint $table) {
-        $table->id(); // PK
-        $table->foreignId('project_id')->constrained()->onDelete('cascade'); // FK to projects
-        $table->string('title');
-        $table->string('desc')->nullable();
-        $table->string('status')->default('Pending');
-        $table->dateTime('start_date')->nullable();
-        $table->dateTime('due_date')->nullable();
-        $table->dateTime('end_date')->nullable();
-        $table->timestamps();
+            $table->id(); // PK
+            
+            // Foreign Key to projects table with cascading delete
+            $table->foreignId('project_id')->constrained()->onDelete('cascade');
+            
+            // Core Milestone Data
+            $table->string('title');
+            $table->text('description')->nullable(); // Upgraded to 'text' and renamed to avoid SQL reserved words
+            $table->string('status')->default('Pending'); 
+            
+            // Dates & Timelines
+            $table->dateTime('start_date')->nullable();
+            $table->dateTime('due_date')->nullable();
+            $table->dateTime('end_date')->nullable();
+            
+            $table->timestamps();
         });
     }
 

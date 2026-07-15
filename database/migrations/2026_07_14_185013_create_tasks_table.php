@@ -13,9 +13,20 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
+            
+            // 1. Relationships
             $table->foreignId('milestone_id')->constrained()->onDelete('cascade');
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
+            
+            // 2. Core Task Data
             $table->string('title');
-            $table->string('status')->default('Pending');
+            $table->text('desc')->nullable(); // Using 'text' instead of string allows longer descriptions
+            
+            // 3. Status & Tracking
+            $table->string('status')->default('Pending'); // e.g., 'Pending', 'In Progress', 'Completed'
+            $table->string('priority')->default('Medium'); // e.g., 'Low', 'Medium', 'High'
+            $table->dateTime('due_date')->nullable();
+            
             $table->timestamps();
         });
     }
