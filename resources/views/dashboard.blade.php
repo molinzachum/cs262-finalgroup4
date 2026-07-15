@@ -14,4 +14,8 @@
             </div>
         </div>
     </div>
+
+    @foreach ($tasks as $task)
+        <x-task-card :task="$task" />
+    @endforeach
 </x-app-layout>

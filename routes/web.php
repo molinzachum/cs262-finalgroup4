@@ -5,14 +5,25 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\OAuthController; 
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskAssignmentController;
-
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectMemberController;
+use App\Http\Controllers\Admin\UserController;
+use App\Models\Task;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+// Member Dashboard Route
+Route::get('/dashboard', function () {
+    $tasks = Task::all();
+
+    return view('dashboard', compact('tasks'));
+})->middleware(['auth', 'verified'])->name('dashboard');
+
 Route::middleware('auth')->group(function () {
 
+    // Task Routes
     Route::resource('tasks', TaskController::class);
 
     Route::view('/teams', 'team.index')->name('team.index');
@@ -26,31 +37,58 @@ Route::middleware('auth')->group(function () {
         [TaskAssignmentController::class, 'destroy']
     );
 
-});
-// member dashboard route
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    // Project Routes
+    Route::resource('projects', ProjectController::class);
 
-// Profile routes 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+    // Project Member (Teams) Routes
+    Route::get('/projects/{project}/members',
+        [ProjectMemberController::class, 'index']
+    );
 
-// Admin Routes 
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::post('/projects/{project}/members',
+        [ProjectMemberController::class, 'store']
+    );
+
+    Route::patch('/project-members/{member}',
+        [ProjectMemberController::class, 'update']
+    );
+
+    Route::delete('/project-members/{member}',
+        [ProjectMemberController::class, 'destroy']
+    );
+
+    // Profile Routes
+    Route::get('/profile',
+        [ProfileController::class, 'edit']
+    )->name('profile.edit');
+
+    Route::patch('/profile',
+        [ProfileController::class, 'update']
+    )->name('profile.update');
+
+    Route::delete('/profile',
+        [ProfileController::class, 'destroy']
+    )->name('profile.destroy');
+});
     
+// Admin Routes
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+
     Route::get('/dashboard', function () {
-        return "Welcome to the Admin Dashboard! Only Role 1 can see this."; 
+        return "Welcome to the Admin Dashboard! Only Role 1 can see this.";
         // We will replace this with a real Blade view later
     })->name('dashboard');
 
-    
     // Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
     // Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    
+
+    Route::resource('users', UserController::class)
+    ->only([
+        'index',
+        'show',
+        'update',
+        'destroy'
+    ]);
 });
 
 require __DIR__.'/auth.php';

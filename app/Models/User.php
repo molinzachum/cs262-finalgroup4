@@ -10,7 +10,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable([
+    'name',
+    'email',
+    'password',
+    'role',
+    'profile_picture',
+    'description',
+    'dob'
+])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -29,4 +37,13 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function projectMembers()
+{
+    return $this->hasMany(ProjectMember::class);
+}
+
+public function taskAssignments()
+{
+    return $this->hasMany(TaskAssignment::class);
+}
 }
