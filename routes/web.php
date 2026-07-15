@@ -28,6 +28,10 @@ Route::middleware('auth')->group(function () {
 
     Route::view('/teams', 'team.index')->name('team.index');
     Route::view('/time-logs', 'timelogs.index')->name('timelogs.index');
+    Route::view('/milestones', 'milestones.index')->name('milestones.index');
+    Route::view('/projects', 'projects.index')->name('projects.index');
+
+
 
     Route::post('/tasks/{task}/assign',
         [TaskAssignmentController::class, 'store']
@@ -69,6 +73,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile',
         [ProfileController::class, 'destroy']
     )->name('profile.destroy');
+
+
 });
     
 // Admin Routes
