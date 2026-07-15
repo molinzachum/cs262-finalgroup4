@@ -14,6 +14,12 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('tasks', TaskController::class);
 
+    Route::view('/teams', 'team.index')->name('team.index');
+    Route::view('/time-logs', 'timelogs.index')->name('timelogs.index');
+
+    Route::view('/teams', 'team.index')->name('team.index');
+    Route::view('/time-logs', 'timelogs.index')->name('timelogs.index');
+
     Route::post(
         '/tasks/{task}/assign',
         [TaskAssignmentController::class, 'store']
