@@ -14,16 +14,19 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('tasks', TaskController::class);
 
-    Route::post('/tasks/{task}/assign',
+    Route::post(
+        '/tasks/{task}/assign',
         [TaskAssignmentController::class, 'store']
     );
 
-    Route::delete('/task-assignment/{assignment}',
+    Route::delete(
+        '/task-assignment/{assignment}',
         [TaskAssignmentController::class, 'destroy']
     );
 
     // Project routes
-    Route::get('/projects/{project}',
+    Route::get(
+        '/projects/{project}',
         [ProjectController::class, 'show']
     );
 
@@ -45,34 +48,36 @@ Route::middleware('auth')->group(function () {
 
 // Admin Routes 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    
+
     Route::get('/dashboard', function () {
-        return "Welcome to the Admin Dashboard! Only Role 1 can see this."; 
+        return view('dashboard');
         // We will replace this with a real Blade view later
     })->name('dashboard');
 
-    
+
     // Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
     // Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    
+
 });
 
 Route::middleware('auth')->group(function () {
 
     Route::resource('tasks', TaskController::class);
 
-    Route::post('/tasks/{task}/assign',
+    Route::post(
+        '/tasks/{task}/assign',
         [TaskAssignmentController::class, 'store']
     );
 
-    Route::delete('/task-assignment/{assignment}',
+    Route::delete(
+        '/task-assignment/{assignment}',
         [TaskAssignmentController::class, 'destroy']
     );
 
-    Route::get('/projects/{project}',
+    Route::get(
+        '/projects/{project}',
         [ProjectController::class, 'show']
     );
-
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
