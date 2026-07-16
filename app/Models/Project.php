@@ -2,31 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-    protected $fillable = [
-        'proj_name',
-        'description',
-        'status',
-        'created_by',
-        'start_date',
-        'end_date'
-    ];
+    use HasFactory;
 
-    public function tasks()
-    {
-        return $this->hasMany(Task::class);
-    }
+    // 1. Allow mass assignment for name
+    protected $fillable = ['name'];
 
-    public function members()
+    // 2. A project has many milestones
+    public function milestones(): HasMany
     {
-        return $this->hasMany(ProjectMember::class);
-    }
-
-    public function creator()
-    {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->hasMany(Milestone::class);
     }
 }
