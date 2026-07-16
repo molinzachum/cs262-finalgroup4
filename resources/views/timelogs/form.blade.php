@@ -52,7 +52,18 @@
     </div>
 
     <div class="flex items-center gap-3 pt-2">
-        <button type="submit" class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">Save Time Log</button>
-        <a href="{{ route('timelogs.index') }}" class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancel</a>
+        <button type="button" class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">Save Time Log</button>
+        <a href="#" class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancel</a>
     </div>
 </div>
+@php
+    $timeLog = $timeLog ?? null;
+    $projects = $projects ?? [
+        (object) ['id' => 1, 'name' => 'Website Redesign'],
+        (object) ['id' => 2, 'name' => 'Client Portal'],
+    ];
+    $tasks = $tasks ?? [
+        (object) ['id' => 1, 'title' => 'Frontend screens'],
+        (object) ['id' => 2, 'title' => 'CRUD form UI'],
+    ];
+@endphp

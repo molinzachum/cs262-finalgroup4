@@ -14,14 +14,14 @@
         ],
         [
             'label' => 'Projects',
-            'href' => route('projects.index'),
-            'active' => request()->routeIs('projects.*'),
+            'href' => '#',
+            'active' => request()->is('projects*'),
             'icon' => 'projects',
         ],
         [
             'label' => 'Milestones',
-            'href' => route('milestones.index'),
-            'active' => request()->routeIs('milestones.*'),
+            'href' => '#',
+            'active' => request()->is('milestones*'),
             'icon' => 'milestones',
         ],
         [

@@ -31,7 +31,10 @@
     </div>
 
     <div class="flex items-center gap-3 pt-2">
-        <button type="submit" class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">Save Project</button>
-        <a href="{{ route('projects.index') }}" class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancel</a>
+        <button type="button" class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">Save Project</button>
+        <a href="#" class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancel</a>
     </div>
 </div>
+@php
+    $project = $project ?? null;
+@endphp

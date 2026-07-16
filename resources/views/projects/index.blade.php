@@ -1,11 +1,30 @@
 <x-app-layout>
+    @php
+        $projects = [
+            (object) [
+                'name' => 'Website Redesign',
+                'status' => 'In progress',
+                'description' => 'Refresh the dashboard, navigation, and project management screens.',
+                'start_date' => '2026-07-12',
+                'due_date' => '2026-07-28',
+            ],
+            (object) [
+                'name' => 'Client Portal',
+                'status' => 'Planning',
+                'description' => 'Prepare the project area, milestone tracking, and time log forms.',
+                'start_date' => '2026-07-16',
+                'due_date' => '2026-08-02',
+            ],
+        ];
+    @endphp
+
     <x-slot name="header">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <p class="text-sm font-medium text-slate-600">Projects</p>
                 <h1 class="text-2xl font-bold text-slate-950">Project Screen</h1>
             </div>
-            <a href="{{ route('projects.create') }}" class="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">
+            <a href="#" class="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">
                 Create Project
             </a>
         </div>
@@ -16,7 +35,7 @@
     @endif
 
     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        @forelse ($projects as $project)
+        @foreach ($projects as $project)
             <article class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
                 <div class="flex items-start justify-between gap-4">
                     <div>
@@ -37,20 +56,11 @@
                     </div>
                 </dl>
                 <div class="mt-5 flex items-center gap-2">
-                    <a href="{{ route('projects.show', $project) }}" class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">View</a>
-                    <a href="{{ route('projects.edit', $project) }}" class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Edit</a>
-                    <form method="POST" action="{{ route('projects.destroy', $project) }}" onsubmit="return confirm('Delete this project?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50">Delete</button>
-                    </form>
+                    <a href="#" class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">View</a>
+                    <a href="#" class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Edit</a>
+                    <button type="button" class="rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50">Delete</button>
                 </div>
             </article>
-        @empty
-            <section class="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center md:col-span-2 xl:col-span-3">
-                <h2 class="text-lg font-semibold text-slate-950">No projects yet</h2>
-                <p class="mt-2 text-sm text-slate-600">Create the first project to start tracking tasks and milestones.</p>
-            </section>
-        @endforelse
+        @endforeach
     </div>
 </x-app-layout>
