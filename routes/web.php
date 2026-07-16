@@ -2,8 +2,11 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MilestoneController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskAssignmentController;
+use App\Http\Controllers\TimeLogController;
 
 
 Route::get('/', function () {
@@ -13,18 +16,11 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
 
     Route::resource('tasks', TaskController::class);
+    Route::resource('projects', ProjectController::class);
+    Route::resource('milestones', MilestoneController::class)->except(['show']);
+    Route::resource('timelogs', TimeLogController::class)->except(['show']);
 
     Route::view('/teams', 'team.index')->name('team.index');
-    Route::view('/projects', 'projects.index')->name('projects.index');
-    Route::view('/projects/create', 'projects.create')->name('projects.create');
-    Route::view('/projects/show', 'projects.show')->name('projects.show');
-    Route::view('/projects/edit', 'projects.edit')->name('projects.edit');
-    Route::view('/milestones', 'milestones.index')->name('milestones.index');
-    Route::view('/milestones/create', 'milestones.create')->name('milestones.create');
-    Route::view('/milestones/edit', 'milestones.edit')->name('milestones.edit');
-    Route::view('/timelogs', 'timelogs.index')->name('timelogs.index');
-    Route::view('/timelogs/create', 'timelogs.create')->name('timelogs.create');
-    Route::view('/timelogs/edit', 'timelogs.edit')->name('timelogs.edit');
 
     Route::post('/tasks/{task}/assign',
         [TaskAssignmentController::class, 'store']
@@ -56,6 +52,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     })->name('dashboard');
 
     
+    // Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
     // Route::get('/users', [UserController::class, 'index'])->name('users.index');
     
 });
