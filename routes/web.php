@@ -139,18 +139,18 @@ Route::middleware(['auth', 'admin'])
     ->name('admin.')
     ->group(function () {
 
-        Route::resource('users', UserController::class)
-        ->only([
-            'index',
-            'show',
-            'update',
-            'destroy'
-        ]);
-
-    });
-    Route::get('/dashboard', function () {
+        Route::get('/dashboard', function () {
         return redirect()->route('dashboard');
     })->name('dashboard');
-
+    
+        Route::resource('users', UserController::class)
+            ->only([
+                'index',
+                'show',
+                'update',
+                'destroy'
+            ]);
+    });
+    
 
 require __DIR__.'/auth.php';
