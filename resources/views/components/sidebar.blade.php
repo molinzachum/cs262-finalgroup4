@@ -46,12 +46,12 @@
 @endphp
 
 <aside
-    class="fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-slate-200 bg-white shadow-xl shadow-slate-950/5 transition-transform duration-200 lg:translate-x-0"
+    class="fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-[#D6E5EC] bg-[#F8FBFD] shadow-xl shadow-slate-950/5 transition-transform duration-200 lg:translate-x-0"
     :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': ! sidebarOpen }"
 >
-    <div class="flex h-20 items-center justify-between border-b border-slate-200 px-6">
+    <div class="flex h-20 items-center justify-between border-b border-[#D6E5EC] px-6">
         <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
-            <span class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#C4D8E2] text-lg font-bold text-slate-800">T</span>
+            <span class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#2F5F73] text-lg font-bold text-white">T</span>
             <span>
                 <span class="block text-lg font-bold text-slate-950">TaskFlow</span>
                 <span class="block text-xs font-medium text-slate-500">Project workspace</span>
@@ -60,7 +60,7 @@
 
         <button
             type="button"
-            class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 lg:hidden"
+            class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-[#E5F0F5] lg:hidden"
             @click="sidebarOpen = false"
             aria-label="Close sidebar"
         >
@@ -74,10 +74,10 @@
         @foreach ($items as $item)
             <a
                 href="{{ $item['href'] }}"
-                class="{{ $item['active'] ? 'bg-[#C4D8E2] text-slate-900 ring-1 ring-slate-200' : 'text-slate-600 hover:bg-[#C4D8E2]/50 hover:text-slate-950' }} flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition"
+                class="{{ $item['active'] ? 'bg-[#C4D8E2] text-slate-950 ring-1 ring-[#9BBCCA]' : 'text-slate-600 hover:bg-[#E5F0F5] hover:text-slate-950' }} flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition"
                 @click="sidebarOpen = false"
             >
-                <span class="{{ $item['active'] ? 'text-slate-800' : 'text-slate-400' }} flex h-5 w-5 items-center justify-center">
+                <span class="{{ $item['active'] ? 'text-[#2F5F73]' : 'text-slate-400' }} flex h-5 w-5 items-center justify-center">
                     @switch($item['icon'])
                         @case('home')
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
@@ -136,10 +136,10 @@
         @endforeach
     </nav>
 
-    <div class="border-t border-slate-200 p-4">
-        <div class="rounded-lg bg-slate-50 p-4">
+    <div class="border-t border-[#D6E5EC] p-4">
+        <div class="rounded-lg border border-[#D6E5EC] bg-white p-4">
             <p class="text-sm font-semibold text-slate-900">Quick status</p>
-            <p class="mt-1 text-xs leading-5 text-slate-500">Shared navigation is ready for the home, dashboard, teams, time logs, and account pages.</p>
+            <p class="mt-1 text-xs leading-5 text-slate-500">Shared navigation is ready for dashboard, teams, projects, milestones, tasks, time logs, and account pages.</p>
         </div>
     </div>
 </aside>

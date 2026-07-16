@@ -13,22 +13,22 @@
                 <p class="text-sm font-medium text-slate-600">Workspace</p>
                 <h1 class="text-2xl font-bold text-slate-950">Teams</h1>
             </div>
-            <button type="button" class="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">
+            <button type="button" class="inline-flex items-center justify-center rounded-lg bg-[#2F5F73] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#244B5C]">
                 Invite Member
             </button>
         </div>
     </x-slot>
 
     <div class="grid gap-6 xl:grid-cols-[1fr_360px]">
-        <section class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-            <div class="border-b border-slate-200 px-5 py-4">
+        <section class="overflow-hidden rounded-lg border border-[#D6E5EC] bg-white shadow-sm">
+            <div class="border-b border-[#D6E5EC] px-5 py-4">
                 <h2 class="text-lg font-semibold text-slate-950">Team Members</h2>
                 <p class="mt-1 text-sm text-slate-500">Frontend-only view for managing team access and roles.</p>
             </div>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-200 text-sm">
-                    <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+                    <thead class="bg-[#EEF6FA] text-left text-xs font-semibold uppercase text-slate-500">
                         <tr>
                             <th class="px-5 py-3">Member</th>
                             <th class="px-5 py-3">Role</th>
@@ -56,7 +56,7 @@
                                 </td>
                                 <td class="px-5 py-4">
                                     <div class="flex justify-end gap-2">
-                                        <button type="button" class="rounded-lg border border-slate-200 px-3 py-2 font-semibold text-slate-700 hover:bg-slate-50">Edit</button>
+                                        <button type="button" class="rounded-lg border border-[#D6E5EC] px-3 py-2 font-semibold text-slate-700 hover:bg-[#EEF6FA]">Edit</button>
                                         <button type="button" class="rounded-lg border border-red-200 px-3 py-2 font-semibold text-red-600 hover:bg-red-50">Remove</button>
                                     </div>
                                 </td>
@@ -67,23 +67,23 @@
             </div>
         </section>
 
-        <aside class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <aside class="rounded-lg border border-[#D6E5EC] bg-white p-5 shadow-sm">
             <h2 class="text-lg font-semibold text-slate-950">Invite Form</h2>
             <div class="mt-5 space-y-4">
                 <div>
                     <label for="invite_email" class="block text-sm font-semibold text-slate-700">Email</label>
-                    <input id="invite_email" type="email" placeholder="member@example.com" class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500">
+                    <input id="invite_email" type="email" placeholder="member@example.com" class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-[#7FA8BA] focus:ring-[#7FA8BA]">
                 </div>
                 <div>
                     <label for="invite_role" class="block text-sm font-semibold text-slate-700">Role</label>
-                    <select id="invite_role" class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500">
+                    <select id="invite_role" class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-[#7FA8BA] focus:ring-[#7FA8BA]">
                         <option>Frontend</option>
                         <option>Backend</option>
                         <option>Reviewer</option>
                         <option>Admin</option>
                     </select>
                 </div>
-                <button type="button" class="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">Send Invite</button>
+                <button type="button" class="w-full rounded-lg bg-[#2F5F73] px-4 py-2 text-sm font-semibold text-white hover:bg-[#244B5C]">Send Invite</button>
             </div>
         </aside>
     </div>

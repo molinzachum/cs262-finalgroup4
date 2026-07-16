@@ -19,7 +19,7 @@
         </div>
     </x-slot>
 
-    <form action="#" class="max-w-3xl rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+    <form action="#" class="max-w-3xl rounded-lg border border-[#D6E5EC] bg-white p-6 shadow-sm">
         @include('timelogs.form', ['timeLog' => $timeLog])
     </form>
 </x-app-layout>

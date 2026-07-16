@@ -26,7 +26,7 @@
                 <p class="text-sm font-medium text-slate-600">Tracking</p>
                 <h1 class="text-2xl font-bold text-slate-950">Time Logs</h1>
             </div>
-            <a href="#" class="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">
+            <a href="#" class="inline-flex items-center justify-center rounded-lg bg-[#2F5F73] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#244B5C]">
                 Create Time Log
             </a>
         </div>
@@ -36,10 +36,10 @@
         <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">{{ session('status') }}</div>
     @endif
 
-    <section class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+    <section class="overflow-hidden rounded-lg border border-[#D6E5EC] bg-white shadow-sm">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200 text-sm">
-                <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+                <thead class="bg-[#EEF6FA] text-left text-xs font-semibold uppercase text-slate-500">
                     <tr>
                         <th class="px-4 py-3">Work</th>
                         <th class="px-4 py-3">Project</th>
@@ -62,7 +62,7 @@
                             <td class="px-4 py-4 font-semibold text-slate-900">{{ number_format($timeLog->hours, 2) }}</td>
                             <td class="px-4 py-4">
                                 <div class="flex justify-end gap-2">
-                                    <a href="#" class="rounded-lg border border-slate-200 px-3 py-2 font-semibold text-slate-700 hover:bg-slate-50">Edit</a>
+                                    <a href="#" class="rounded-lg border border-[#D6E5EC] px-3 py-2 font-semibold text-slate-700 hover:bg-[#EEF6FA]">Edit</a>
                                     <button type="button" class="rounded-lg border border-red-200 px-3 py-2 font-semibold text-red-600 hover:bg-red-50">Delete</button>
                                 </div>
                             </td>
