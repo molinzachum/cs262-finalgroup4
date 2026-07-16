@@ -13,25 +13,9 @@
         @csrf
     </form>
 
-<form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
         @csrf
         @method('patch')
-
-        <div>
-    <x-input-label for="profile_picture" :value="__('Profile Picture')" />
-
-    <div class="mt-2 flex items-center gap-4">
-        <img
-            src="{{ $user->profile_picture ? asset('storage/' . $user->profile_picture) : asset('images/default-avatar.png') }}"
-            alt="{{ $user->name }}"
-            class="h-16 w-16 rounded-full object-cover border border-gray-200 dark:border-gray-700"
-            onerror="this.style.display='none'"
-        >
-        <input id="profile_picture" name="profile_picture" type="file" accept="image/png, image/jpeg, image/webp" class="block w-full text-sm text-gray-600 dark:text-gray-400 file:mr-4 file:rounded-md file:border-0 file:bg-gray-100 file:px-4 file:py-2 file:text-sm file:font-medium file:text-gray-700 hover:file:bg-gray-200 dark:file:bg-gray-700 dark:file:text-gray-200" />
-    </div>
-    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('JPG, PNG or WEBP, up to 2MB.') }}</p>
-    <x-input-error class="mt-2" :messages="$errors->get('profile_picture')" />
-</div>
 
         <div>
             <x-input-label for="name" :value="__('Name')" />
