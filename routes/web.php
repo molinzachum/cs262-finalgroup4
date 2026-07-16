@@ -116,8 +116,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/dashboard', function () {
-        return "Welcome to the Admin Dashboard! Only Role 1 can see this.";
-        // We will replace this with a real Blade view later
+        return redirect()->route('dashboard');
     })->name('dashboard');
 
     Route::resource('users', UserController::class)
