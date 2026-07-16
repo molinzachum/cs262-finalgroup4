@@ -11,18 +11,28 @@ class ProjectMemberController extends Controller
     // Show all members in a project
     public function index(Request $request, Project $project = null)
     {
-        if (!$project || !$project->exists) {
-            $query = Project::query();
-            if (auth()->user()->role === 1) {
-                $query->where('created_by', auth()->id());
-            } else {
-                $query->whereHas('members', function ($q) {
-                    $q->where('user_id', auth()->id());
-                });
-            }
-            $project = $query->first();
+        // 1. Get all projects accessible by the authenticated user
+        $projectsQuery = Project::query();
+        if (auth()->user()->role === 1) {
+            $projectsQuery->where('created_by', auth()->id());
+        } else {
+            $projectsQuery->whereHas('members', function ($q) {
+                $q->where('user_id', auth()->id());
+            });
+        }
+        $projects = $projectsQuery->get();
+
+        // 2. Determine which project to load
+        $projectId = $request->query('project_id');
+        if ($projectId) {
+            $project = Project::find($projectId);
         }
 
+        if (!$project || !$project->exists) {
+            $project = $projects->first();
+        }
+
+        // 3. Security check: non-admins can only view their own projects
         if ($project && auth()->user()->role !== 1) {
             $isMember = $project->members()->where('user_id', auth()->id())->exists();
             if (!$isMember) {
@@ -36,7 +46,8 @@ class ProjectMemberController extends Controller
             return view('team.index', [
                 'project' => null,
                 'members' => collect(),
-                'search' => $search
+                'search' => $search,
+                'projects' => $projects
             ]);
         }
 
@@ -54,7 +65,7 @@ class ProjectMemberController extends Controller
 
         $users = \App\Models\User::all();
 
-        return view('team.index', compact('project', 'members', 'search', 'users'));
+        return view('team.index', compact('project', 'members', 'search', 'users', 'projects'));
     }
 
     // Add member to project

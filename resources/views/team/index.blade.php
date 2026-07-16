@@ -3,9 +3,22 @@
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
              <div>
                  <p class="text-sm font-medium text-slate-600">Workspace</p>
-                 <h1 class="text-2xl font-bold text-slate-950">
-                     {{ $project ? $project->name : 'Teams' }}
-                 </h1>
+                 <div class="flex items-center gap-3 mt-1">
+                     <h1 class="text-2xl font-bold text-slate-950">Teams</h1>
+                     @if($projects->count() > 0)
+                         <form method="GET" action="{{ route('team.index') }}" class="inline-block">
+                             <select name="project_id" onchange="this.form.submit()" class="rounded-lg border-slate-300 shadow-sm focus:border-[#7FA8BA] focus:ring-[#7FA8BA] text-sm p-1.5 border bg-white">
+                                 @foreach($projects as $proj)
+                                     <option value="{{ $proj->id }}" @selected($project && $project->id === $proj->id)>
+                                         {{ $proj->name }}
+                                     </option>
+                                 @endforeach
+                             </select>
+                         </form>
+                     @else
+                         <span class="text-slate-500 text-sm">(No projects created yet)</span>
+                     @endif
+                 </div>
              </div>
         </div>
     </x-slot>
