@@ -109,7 +109,7 @@ class TaskController extends Controller
             'due_date',
         ]));
 
-        return redirect('/tasks');
+        return redirect()->route('tasks.show', $task)->with('status', 'Task updated successfully!');
     }
 
     // Delete task

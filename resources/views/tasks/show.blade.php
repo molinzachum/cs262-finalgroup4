@@ -14,7 +14,22 @@
                     Back to Tasks
                 </a>
                 @can('update', $task)
-                    <a href="{{ route('tasks.edit', $task) }}" class="inline-flex items-center justify-center rounded-lg bg-[#2F5F73] px-4 py-2 text-sm font-semibold text-white hover:bg-[#244B5C] transition">
+                    <form method="POST" action="{{ route('tasks.update', $task) }}" class="inline">
+                        @csrf
+                        @method('PATCH')
+                        @if($task->status === 'To-do')
+                            <input type="hidden" name="status" value="In-progress">
+                            <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-blue-600 hover:bg-blue-700 px-4 py-2 text-sm font-semibold text-white transition">Start Task</button>
+                        @elseif($task->status === 'In-progress')
+                            <input type="hidden" name="status" value="Done">
+                            <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-green-600 hover:bg-green-700 px-4 py-2 text-sm font-semibold text-white transition">Complete Task</button>
+                        @elseif($task->status === 'Done')
+                            <input type="hidden" name="status" value="To-do">
+                            <button type="submit" class="inline-flex items-center justify-center rounded-lg bg-slate-600 hover:bg-slate-700 px-4 py-2 text-sm font-semibold text-white transition">Reopen Task</button>
+                        @endif
+                    </form>
+
+                    <a href="{{ route('tasks.edit', $task) }}" class="inline-flex items-center justify-center rounded-lg bg-[#2F5F73] px-4 py-2 text-sm font-semibold text-white hover:bg-[#244B5C] transition flex-shrink-0">
                         Edit Task
                     </a>
                 @endcan
