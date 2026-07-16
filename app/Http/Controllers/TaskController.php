@@ -39,7 +39,8 @@ class TaskController extends Controller
         $project = $milestone->project;
         if (auth()->user()->role !== 1) {
             $isMember = $project->members()->where('user_id', auth()->id())->exists();
-            if (!$isMember) {
+            $isOwner = $project->created_by === auth()->id();
+            if (!$isMember && !$isOwner) {
                 abort(403, 'Unauthorized action.');
             }
         }
@@ -97,7 +98,8 @@ class TaskController extends Controller
             $milestone = Milestone::findOrFail($request->milestone_id);
             if (auth()->user()->role !== 1) {
                 $isMember = $milestone->project->members()->where('user_id', auth()->id())->exists();
-                if (!$isMember) {
+                $isOwner = $milestone->project->created_by === auth()->id();
+                if (!$isMember && !$isOwner) {
                     abort(403, 'Unauthorized action.');
                 }
             }
