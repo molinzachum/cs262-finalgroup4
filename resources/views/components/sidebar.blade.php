@@ -1,12 +1,6 @@
 @php
     $items = [
         [
-            'label' => 'Home',
-            'href' => url('/'),
-            'active' => request()->is('/'),
-            'icon' => 'home',
-        ],
-        [
             'label' => 'Dashboard',
             'href' => route('dashboard'),
             'active' => request()->routeIs('dashboard'),
@@ -45,7 +39,7 @@
 >
     <div class="flex h-20 items-center justify-between border-b border-slate-200 px-6">
         <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
-            <span class="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-600 text-lg font-bold text-white">T</span>
+            <span class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#C4D8E2] text-lg font-bold text-slate-800">T</span>
             <span>
                 <span class="block text-lg font-bold text-slate-950">TaskFlow</span>
                 <span class="block text-xs font-medium text-slate-500">Project workspace</span>
@@ -68,10 +62,10 @@
         @foreach ($items as $item)
             <a
                 href="{{ $item['href'] }}"
-                class="{{ $item['active'] ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950' }} flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition"
+                class="{{ $item['active'] ? 'bg-[#C4D8E2] text-slate-900 ring-1 ring-slate-200' : 'text-slate-600 hover:bg-[#C4D8E2]/50 hover:text-slate-950' }} flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition"
                 @click="sidebarOpen = false"
             >
-                <span class="{{ $item['active'] ? 'text-emerald-600' : 'text-slate-400' }} flex h-5 w-5 items-center justify-center">
+                <span class="{{ $item['active'] ? 'text-slate-800' : 'text-slate-400' }} flex h-5 w-5 items-center justify-center">
                     @switch($item['icon'])
                         @case('home')
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">

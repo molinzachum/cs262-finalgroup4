@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <p class="text-sm font-medium text-emerald-600">Workspace</p>
+            <p class="text-sm font-medium text-slate-600">Workspace</p>
             <h1 class="text-2xl font-bold text-slate-950">Teams</h1>
         </div>
     </x-slot>

@@ -15,7 +15,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased text-slate-900">
-        <div x-data="{ sidebarOpen: false }" class="min-h-screen bg-slate-100">
+        <div x-data="{ sidebarOpen: false }" class="min-h-screen bg-[#C4D8E2]">
             <div x-cloak x-show="sidebarOpen" class="fixed inset-0 z-40 bg-slate-950/40 lg:hidden" @click="sidebarOpen = false"></div>
 
             <x-sidebar />
@@ -53,7 +53,7 @@
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
                                 <button class="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-2 py-2 text-left transition hover:bg-slate-50">
-                                    <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 text-sm font-semibold text-emerald-700">
+                                    <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#C4D8E2] text-sm font-semibold text-slate-800">
                                         {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                                     </span>
                                     <span class="hidden leading-tight sm:block">
