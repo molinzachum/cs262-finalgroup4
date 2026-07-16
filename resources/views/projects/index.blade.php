@@ -24,7 +24,7 @@
                 <p class="text-sm font-medium text-slate-600">Projects</p>
                 <h1 class="text-2xl font-bold text-slate-950">Project Screen</h1>
             </div>
-            <a href="#" class="inline-flex items-center justify-center rounded-lg bg-[#2F5F73] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#244B5C]">
+            <a href="{{ route('projects.create') }}" class="inline-flex items-center justify-center rounded-lg bg-[#2F5F73] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#244B5C]">
                 Create Project
             </a>
         </div>
