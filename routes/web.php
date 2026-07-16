@@ -17,14 +17,44 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    $tasks = Task::whereHas('milestone.project', function ($query) {
-        $query->where('created_by', auth()->id())
-            ->orWhereHas('members', function ($q) {
-                $q->where('user_id', auth()->id());
-            });
-    })->get();
+    if (auth()->user()->role === 1) {
+        // Admin Dashboard
+        $projectsCount = \App\Models\Project::where('created_by', auth()->id())->count();
+        $tasksCount = Task::whereHas('milestone.project', function ($q) {
+            $q->where('created_by', auth()->id());
+        })->where('status', '!=', 'Completed')->count();
+        $milestonesCount = \App\Models\Milestone::whereHas('project', function ($q) {
+            $q->where('created_by', auth()->id());
+        })->count();
+        $hoursLogged = \App\Models\TimeLog::whereHas('task.milestone.project', function ($q) {
+            $q->where('created_by', auth()->id());
+        })->sum('hours_spent') ?: 0;
 
-    return view('dashboard', compact('tasks'));
+        $tasks = Task::whereHas('milestone.project', function ($q) {
+            $q->where('created_by', auth()->id());
+        })->with('project')->get();
+
+        return view('dashboard.admin', compact('projectsCount', 'tasksCount', 'milestonesCount', 'hoursLogged', 'tasks'));
+    } else {
+        // Member Dashboard
+        $projectsCount = \App\Models\Project::whereHas('members', function ($q) {
+            $q->where('user_id', auth()->id());
+        })->count();
+        $tasksCount = Task::whereHas('assignments', function ($q) {
+            $q->where('user_id', auth()->id());
+        })->where('status', '!=', 'Completed')->count();
+        $milestonesCount = \App\Models\Milestone::whereHas('project.members', function ($q) {
+            $q->where('user_id', auth()->id());
+        })->count();
+        $hoursLogged = \App\Models\TimeLog::where('user_id', auth()->id())->sum('hours_spent') ?: 0;
+
+        // Fetch tasks assigned to the member
+        $tasks = Task::whereHas('assignments', function ($q) {
+            $q->where('user_id', auth()->id());
+        })->with('project')->get();
+
+        return view('dashboard.member', compact('projectsCount', 'tasksCount', 'milestonesCount', 'hoursLogged', 'tasks'));
+    }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
