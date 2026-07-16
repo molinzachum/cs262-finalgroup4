@@ -55,9 +55,11 @@
                 <p class="text-sm font-medium text-slate-600">Overview</p>
                 <h1 class="text-2xl font-bold text-slate-950">Dashboard</h1>
             </div>
-            <a href="#" class="inline-flex items-center justify-center rounded-lg bg-[#2F5F73] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#244B5C]">
-                New Project
-            </a>
+            @if(auth()->user()->role === 1)
+                <a href="{{ route('projects.create') }}" class="inline-flex items-center justify-center rounded-lg bg-[#2F5F73] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#244B5C]">
+                    New Project
+                </a>
+            @endif
         </div>
     </x-slot>
 
@@ -93,11 +95,11 @@
                 </div>
 
                 <div class="mt-5 grid gap-3 sm:grid-cols-2">
-                    <a href="#" class="rounded-lg border border-[#D6E5EC] bg-[#F8FBFD] p-4 transition hover:border-[#9BBCCA] hover:bg-[#EEF6FA]">
+                    <a href="{{ route('projects.index') }}" class="rounded-lg border border-[#D6E5EC] bg-[#F8FBFD] p-4 transition hover:border-[#9BBCCA] hover:bg-[#EEF6FA]">
                         <p class="font-semibold text-[#2F5F73]">Projects</p>
-                        <p class="mt-1 text-sm text-slate-500">View, create, edit, and delete projects.</p>
+                        <p class="mt-1 text-sm text-slate-500">View and track projects in your workspace.</p>
                     </a>
-                    <a href="#" class="rounded-lg border border-[#D6E5EC] bg-[#F8FBFD] p-4 transition hover:border-[#9BBCCA] hover:bg-[#EEF6FA]">
+                    <a href="{{ route('milestones.index') }}" class="rounded-lg border border-[#D6E5EC] bg-[#F8FBFD] p-4 transition hover:border-[#9BBCCA] hover:bg-[#EEF6FA]">
                         <p class="font-semibold text-[#2F5F73]">Milestones</p>
                         <p class="mt-1 text-sm text-slate-500">Track project checkpoints and due dates.</p>
                     </a>

@@ -9,51 +9,61 @@ use Illuminate\Http\Request;
 class ProjectMemberController extends Controller
 {
     // Show all members in a project
- public function index(Request $request, Project $project = null)
-{
-    if (!$project || !$project->exists) {
-        $project = Project::where('created_by', auth()->id())
-            ->orWhereHas('members', function ($query) {
-                $query->where('user_id', auth()->id());
+    public function index(Request $request, Project $project = null)
+    {
+        if (!$project || !$project->exists) {
+            $query = Project::query();
+            if (auth()->user()->role === 1) {
+                $query->where('created_by', auth()->id());
+            } else {
+                $query->whereHas('members', function ($q) {
+                    $q->where('user_id', auth()->id());
+                });
+            }
+            $project = $query->first();
+        }
+
+        if ($project && auth()->user()->role !== 1) {
+            $isMember = $project->members()->where('user_id', auth()->id())->exists();
+            if (!$isMember) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
+
+        $search = $request->search;
+
+        if (!$project) {
+            return view('team.index', [
+                'project' => null,
+                'members' => collect(),
+                'search' => $search
+            ]);
+        }
+
+        $members = $project->members()
+            ->with([
+                'user.taskAssignments.task'
+            ])
+            ->when($search, function ($query) use ($search) {
+                $query->whereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
             })
-            ->first();
+            ->get();
+
+        $users = \App\Models\User::all();
+
+        return view('team.index', compact('project', 'members', 'search', 'users'));
     }
-
-    $search = $request->search;
-
-    if (!$project) {
-        return view('team.index', [
-            'project' => null,
-            'members' => collect(),
-            'search' => $search
-        ]);
-    }
-
-    $members = $project->members()
-        ->with([
-            'user.taskAssignments.task'
-        ])
-        ->when($search, function ($query) use ($search) {
-
-            $query->whereHas('user', function ($userQuery) use ($search) {
-
-                $userQuery->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
-
-            });
-
-        })
-        ->get();
-
-
-    $users = \App\Models\User::all();
-
-    return view('team.index', compact('project', 'members', 'search', 'users'));
-}
 
     // Add member to project
     public function store(Request $request, Project $project)
     {
+        if (auth()->user()->role !== 1) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'member_role' => 'required|string|max:255',
@@ -72,6 +82,10 @@ class ProjectMemberController extends Controller
     // Update member role
     public function update(Request $request, ProjectMember $member)
     {
+        if (auth()->user()->role !== 1) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'member_role' => 'required|string|max:255',
         ]);
@@ -86,6 +100,10 @@ class ProjectMemberController extends Controller
     // Remove member
     public function destroy(ProjectMember $member)
     {
+        if (auth()->user()->role !== 1) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $member->delete();
 
         return redirect()->back();
