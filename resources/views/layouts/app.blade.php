@@ -15,17 +15,17 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased text-slate-900">
-        <div x-data="{ sidebarOpen: false }" class="min-h-screen bg-[#C4D8E2]">
+        <div x-data="{ sidebarOpen: false }" class="min-h-screen bg-[#EEF6FA]">
             <div x-cloak x-show="sidebarOpen" class="fixed inset-0 z-40 bg-slate-950/40 lg:hidden" @click="sidebarOpen = false"></div>
 
             <x-sidebar />
 
             <div class="min-h-screen lg:pl-72">
-                <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
+                <header class="sticky top-0 z-30 border-b border-[#D6E5EC] bg-[#F8FBFD]/95 backdrop-blur">
                     <div class="flex h-20 items-center gap-4 px-4 sm:px-6 lg:px-8">
                         <button
                             type="button"
-                            class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-slate-100 lg:hidden"
+                            class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#D6E5EC] text-slate-600 transition hover:bg-[#E5F0F5] lg:hidden"
                             @click="sidebarOpen = true"
                             aria-label="Open sidebar"
                         >
@@ -42,7 +42,7 @@
                             @endisset
                         </div>
 
-                        <div class="hidden w-full max-w-xs items-center rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500 md:flex">
+                        <div class="hidden w-full max-w-xs items-center rounded-lg border border-[#D6E5EC] bg-[#EEF6FA] px-3 py-2 text-sm text-slate-500 md:flex">
                             <svg class="mr-2 h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                 <circle cx="11" cy="11" r="7" />
                                 <path stroke-linecap="round" d="m20 20-3.5-3.5" />
@@ -52,8 +52,8 @@
 
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
-                                <button class="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-2 py-2 text-left transition hover:bg-slate-50">
-                                    <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#C4D8E2] text-sm font-semibold text-slate-800">
+                                <button class="flex items-center gap-3 rounded-lg border border-[#D6E5EC] bg-white px-2 py-2 text-left transition hover:bg-[#EEF6FA]">
+                                    <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2F5F73] text-sm font-semibold text-white">
                                         {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                                     </span>
                                     <span class="hidden leading-tight sm:block">
@@ -87,7 +87,7 @@
                     {{ $slot }}
                 </main>
 
-                <footer class="border-t border-slate-200 px-4 py-6 text-sm text-slate-500 sm:px-6 lg:px-8">
+                <footer class="border-t border-[#D6E5EC] bg-[#F8FBFD]/70 px-4 py-6 text-sm text-slate-500 sm:px-6 lg:px-8">
                     <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <p>&copy; {{ date('Y') }} {{ config('app.name', 'TaskFlow') }}. All rights reserved.</p>
                         <div class="flex gap-4">

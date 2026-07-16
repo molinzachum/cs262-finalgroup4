@@ -42,7 +42,9 @@ class ProjectMemberController extends Controller
         ->get();
 
 
-    return view('team.index', compact('project', 'members', 'search'));
+    $users = \App\Models\User::all();
+
+    return view('team.index', compact('project', 'members', 'search', 'users'));
 }
 
     // Add member to project
