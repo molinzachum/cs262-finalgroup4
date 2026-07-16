@@ -9,6 +9,8 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectMemberController;
 use App\Http\Controllers\Admin\UserController;
 use App\Models\Task;
+use App\Http\Controllers\TimeLogController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,11 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('tasks', TaskController::class);
 
     Route::view('/teams', 'team.index')->name('team.index');
-    Route::view('/time-logs', 'timelogs.index')->name('timelogs.index');
     Route::view('/milestones', 'milestones.index')->name('milestones.index');
-    Route::view('/projects', 'projects.index')->name('projects.index');
-
-
 
     Route::post('/tasks/{task}/assign',
         [TaskAssignmentController::class, 'store']
@@ -74,6 +72,9 @@ Route::middleware('auth')->group(function () {
         [ProfileController::class, 'destroy']
     )->name('profile.destroy');
 
+    // Time Log Routes
+    Route::get('/time-logs', [TimeLogController::class, 'index'])->name('timelogs.index');
+    Route::post('/tasks/{task}/time-logs', [TimeLogController::class, 'store'])->name('timelogs.store');
 
 });
     
@@ -84,9 +85,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         return "Welcome to the Admin Dashboard! Only Role 1 can see this.";
         // We will replace this with a real Blade view later
     })->name('dashboard');
-
-    // Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
-    // Route::get('/users', [UserController::class, 'index'])->name('users.index');
 
     Route::resource('users', UserController::class)
     ->only([
