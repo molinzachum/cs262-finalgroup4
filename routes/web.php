@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('tasks', TaskController::class);
 
     Route::get('/teams', [ProjectMemberController::class, 'index'])->name('team.index');
-    Route::view('/milestones', 'milestones.index')->name('milestones.index');
+    Route::resource('milestones', \App\Http\Controllers\WebMilestoneController::class);
 
     Route::post('/tasks/{task}/assign',
         [TaskAssignmentController::class, 'store']

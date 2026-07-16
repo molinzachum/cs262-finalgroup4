@@ -1,14 +1,4 @@
 <x-app-layout>
-    @php
-        $milestone = (object) [
-            'project_id' => 1,
-            'title' => 'Wireframe Approval',
-            'description' => 'Review project and milestone screens with the team.',
-            'status' => 'In progress',
-            'due_date' => '2026-07-20',
-        ];
-    @endphp
-
     <x-slot name="header">
         <div>
             <p class="text-sm font-medium text-slate-600">Milestones</p>
@@ -16,7 +6,9 @@
         </div>
     </x-slot>
 
-    <form action="#" class="max-w-3xl rounded-lg border border-[#D6E5EC] bg-white p-6 shadow-sm">
+    <form method="POST" action="{{ route('milestones.update', $milestone) }}" class="max-w-3xl rounded-lg border border-[#D6E5EC] bg-white p-6 shadow-sm">
+        @csrf
+        @method('PUT')
         @include('milestones.form', ['milestone' => $milestone])
     </form>
 </x-app-layout>
