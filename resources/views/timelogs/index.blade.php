@@ -1,4 +1,25 @@
 <x-app-layout>
+    @php
+        $timeLogs = [
+            (object) [
+                'title' => 'Project screen layout',
+                'notes' => 'Created the list, detail, create, and edit UI states.',
+                'project' => (object) ['name' => 'Website Redesign'],
+                'task' => (object) ['title' => 'Frontend screens'],
+                'work_date' => '2026-07-16',
+                'hours' => 2.5,
+            ],
+            (object) [
+                'title' => 'Milestone form review',
+                'notes' => 'Checked fields for status, project, and due date.',
+                'project' => (object) ['name' => 'Client Portal'],
+                'task' => (object) ['title' => 'CRUD form UI'],
+                'work_date' => '2026-07-17',
+                'hours' => 1.25,
+            ],
+        ];
+    @endphp
+
     <x-slot name="header">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -10,10 +31,6 @@
             </a>
         </div>
     </x-slot>
-
-    @if (session('status'))
-        <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">{{ session('status') }}</div>
-    @endif
 
     <section class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
         <div class="overflow-x-auto">
@@ -29,7 +46,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
-                    @forelse ($timeLogs as $timeLog)
+                    @foreach ($timeLogs as $timeLog)
                         <tr>
                             <td class="px-4 py-4">
                                 <p class="font-semibold text-slate-950">{{ $timeLog->title }}</p>
@@ -41,20 +58,12 @@
                             <td class="px-4 py-4 font-semibold text-slate-900">{{ number_format($timeLog->hours, 2) }}</td>
                             <td class="px-4 py-4">
                                 <div class="flex justify-end gap-2">
-                                    <a href="{{ route('timelogs.edit', $timeLog) }}" class="rounded-lg border border-slate-200 px-3 py-2 font-semibold text-slate-700 hover:bg-slate-50">Edit</a>
-                                    <form method="POST" action="{{ route('timelogs.destroy', $timeLog) }}" onsubmit="return confirm('Delete this time log?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="rounded-lg border border-red-200 px-3 py-2 font-semibold text-red-600 hover:bg-red-50">Delete</button>
-                                    </form>
+                                    <a href="{{ route('timelogs.edit') }}" class="rounded-lg border border-slate-200 px-3 py-2 font-semibold text-slate-700 hover:bg-slate-50">Edit</a>
+                                    <button type="button" class="rounded-lg border border-red-200 px-3 py-2 font-semibold text-red-600 hover:bg-red-50">Delete</button>
                                 </div>
                             </td>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="px-4 py-10 text-center text-slate-500">No time logs yet.</td>
-                        </tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
         </div>

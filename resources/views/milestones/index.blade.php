@@ -1,4 +1,23 @@
 <x-app-layout>
+    @php
+        $milestones = [
+            (object) [
+                'title' => 'Wireframe Approval',
+                'description' => 'Review project and milestone screens with the team.',
+                'project' => (object) ['name' => 'Website Redesign'],
+                'status' => 'In progress',
+                'due_date' => '2026-07-20',
+            ],
+            (object) [
+                'title' => 'Frontend CRUD Forms',
+                'description' => 'Prepare create, edit, and delete UI states for review.',
+                'project' => (object) ['name' => 'Client Portal'],
+                'status' => 'Not started',
+                'due_date' => '2026-07-24',
+            ],
+        ];
+    @endphp
+
     <x-slot name="header">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -10,10 +29,6 @@
             </a>
         </div>
     </x-slot>
-
-    @if (session('status'))
-        <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">{{ session('status') }}</div>
-    @endif
 
     <section class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
         <div class="overflow-x-auto">
@@ -28,7 +43,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
-                    @forelse ($milestones as $milestone)
+                    @foreach ($milestones as $milestone)
                         <tr>
                             <td class="px-4 py-4">
                                 <p class="font-semibold text-slate-950">{{ $milestone->title }}</p>
@@ -41,20 +56,12 @@
                             <td class="px-4 py-4 text-slate-700">{{ $milestone->due_date ?: 'Not set' }}</td>
                             <td class="px-4 py-4">
                                 <div class="flex justify-end gap-2">
-                                    <a href="{{ route('milestones.edit', $milestone) }}" class="rounded-lg border border-slate-200 px-3 py-2 font-semibold text-slate-700 hover:bg-slate-50">Edit</a>
-                                    <form method="POST" action="{{ route('milestones.destroy', $milestone) }}" onsubmit="return confirm('Delete this milestone?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="rounded-lg border border-red-200 px-3 py-2 font-semibold text-red-600 hover:bg-red-50">Delete</button>
-                                    </form>
+                                    <a href="{{ route('milestones.edit') }}" class="rounded-lg border border-slate-200 px-3 py-2 font-semibold text-slate-700 hover:bg-slate-50">Edit</a>
+                                    <button type="button" class="rounded-lg border border-red-200 px-3 py-2 font-semibold text-red-600 hover:bg-red-50">Delete</button>
                                 </div>
                             </td>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="px-4 py-10 text-center text-slate-500">No milestones yet.</td>
-                        </tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
         </div>

@@ -1,3 +1,11 @@
+@php
+    $milestone = $milestone ?? null;
+    $projects = $projects ?? [
+        (object) ['id' => 1, 'name' => 'Website Redesign'],
+        (object) ['id' => 2, 'name' => 'Client Portal'],
+    ];
+@endphp
+
 <div class="space-y-5">
     <div>
         <label for="project_id" class="block text-sm font-semibold text-slate-700">Project</label>
@@ -37,7 +45,7 @@
     </div>
 
     <div class="flex items-center gap-3 pt-2">
-        <button type="submit" class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">Save Milestone</button>
+        <button type="button" class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">Save Milestone</button>
         <a href="{{ route('milestones.index') }}" class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Cancel</a>
     </div>
 </div>

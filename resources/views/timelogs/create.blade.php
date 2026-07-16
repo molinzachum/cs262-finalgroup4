@@ -6,8 +6,7 @@
         </div>
     </x-slot>
 
-    <form method="POST" action="{{ route('timelogs.store') }}" class="max-w-3xl rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        @csrf
+    <form action="#" class="max-w-3xl rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
         @include('timelogs.form', ['timeLog' => null])
     </form>
 </x-app-layout>

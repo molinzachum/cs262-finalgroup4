@@ -1,11 +1,21 @@
 <x-app-layout>
+    @php
+        $project = (object) [
+            'name' => 'Website Redesign',
+            'description' => 'Refresh the dashboard, navigation, and project management screens.',
+            'status' => 'In progress',
+            'start_date' => '2026-07-12',
+            'due_date' => '2026-07-28',
+        ];
+    @endphp
+
     <x-slot name="header">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <p class="text-sm font-medium text-slate-600">Project Details</p>
                 <h1 class="text-2xl font-bold text-slate-950">{{ $project->name }}</h1>
             </div>
-            <a href="{{ route('projects.edit', $project) }}" class="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">Edit Project</a>
+            <a href="{{ route('projects.edit') }}" class="inline-flex items-center justify-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">Edit Project</a>
         </div>
     </x-slot>
 
