@@ -11,25 +11,35 @@ class TaskAssignmentController extends Controller
     // Assign user to task
     public function store(Request $request, Task $task)
     {
+        $this->authorize('update', $task);
+
         $request->validate([
             'user_id' => 'required|exists:users,id',
         ]);
 
-        TaskAssignment::create([
-            'task_id' => $task->id,
-            'user_id' => $request->user_id,
-            'assigned_at' => now(),
-        ]);
+        // Prevent duplicate assignments
+        $alreadyAssigned = TaskAssignment::where('task_id', $task->id)
+            ->where('user_id', $request->user_id)
+            ->exists();
 
-        return redirect('/tasks');
+        if (!$alreadyAssigned) {
+            TaskAssignment::create([
+                'task_id' => $task->id,
+                'user_id' => $request->user_id,
+                'assigned_at' => now(),
+            ]);
+        }
+
+        return redirect()->back();
     }
-
 
     // Remove user from task
     public function destroy(TaskAssignment $assignment)
     {
+        $this->authorize('update', $assignment->task);
+
         $assignment->delete();
 
-        return redirect('/tasks');
+        return redirect()->back();
     }
 }

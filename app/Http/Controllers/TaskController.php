@@ -24,7 +24,6 @@ class TaskController extends Controller
         return view('tasks.index', compact('tasks'));
     }
 
-
     // Create task
     public function store(Request $request)
     {
@@ -35,6 +34,15 @@ class TaskController extends Controller
             'priority' => 'nullable|string',
             'due_date' => 'nullable|date',
         ]);
+
+        $milestone = Milestone::findOrFail($request->milestone_id);
+        $project = $milestone->project;
+        if (auth()->user()->role !== 1) {
+            $isMember = $project->members()->where('user_id', auth()->id())->exists();
+            if (!$isMember) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
 
         Task::create([
             'milestone_id' => $request->milestone_id,
@@ -49,10 +57,17 @@ class TaskController extends Controller
         return redirect('/tasks');
     }
 
-
     // Show single task
     public function show(Task $task)
     {
+        if (auth()->user()->role !== 1) {
+            $project = $task->milestone->project;
+            $isMember = $project->members()->where('user_id', auth()->id())->exists();
+            if (!$isMember) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
+
         $task->load([
             'assignments.user',
             'creator'
@@ -61,32 +76,41 @@ class TaskController extends Controller
         return view('tasks.show', compact('task'));
     }
 
-
     // Update task
     public function update(Request $request, Task $task)
     {
         $this->authorize('update', $task);
 
         $request->validate([
-            'title' => 'sometimes|string|max:255',
+            'milestone_id' => 'sometimes|required|exists:milestones,id',
+            'title' => 'sometimes|required|string|max:255',
             'desc' => 'nullable|string',
-            'status' => 'sometimes|in:To-do,In-progress,Done',
-            'priority' => 'sometimes|string',
+            'status' => 'sometimes|required|in:To-do,In-progress,Done',
+            'priority' => 'sometimes|required|string',
             'due_date' => 'nullable|date',
         ]);
 
+        if ($request->has('milestone_id')) {
+            $milestone = Milestone::findOrFail($request->milestone_id);
+            if (auth()->user()->role !== 1) {
+                $isMember = $milestone->project->members()->where('user_id', auth()->id())->exists();
+                if (!$isMember) {
+                    abort(403, 'Unauthorized action.');
+                }
+            }
+        }
 
-        $task->update([
-            'title' => $request->title,
-            'desc' => $request->desc,
-            'status' => $request->status,
-            'priority' => $request->priority,
-            'due_date' => $request->due_date,
-        ]);
+        $task->update($request->only([
+            'milestone_id',
+            'title',
+            'desc',
+            'status',
+            'priority',
+            'due_date',
+        ]));
 
         return redirect('/tasks');
     }
-
 
     // Delete task
     public function destroy(Task $task)
@@ -122,5 +146,4 @@ class TaskController extends Controller
 
         return view('tasks.edit', compact('task', 'milestones'));
     }
-    
 }
