@@ -1,16 +1,12 @@
 @php
+    $role = auth()->user()->role;
+    
     $items = [
         [
             'label' => 'Dashboard',
             'href' => route('dashboard'),
             'active' => request()->routeIs('dashboard'),
             'icon' => 'dashboard',
-        ],
-        [
-            'label' => 'Teams',
-            'href' => route('team.index'),
-            'active' => request()->routeIs('team.*'),
-            'icon' => 'teams',
         ],
         [
             'label' => 'Projects',
@@ -37,11 +33,28 @@
             'icon' => 'time',
         ],
         [
-            'label' => 'Account',
-            'href' => route('profile.edit'),
-            'active' => request()->routeIs('profile.*'),
-            'icon' => 'account',
+            'label' => 'Teams',
+            'href' => route('team.index'),
+            'active' => request()->routeIs('team.*'),
+            'icon' => 'teams',
         ],
+    ];
+
+    // Only Admins see the system users management link
+    if ($role === 1) {
+        $items[] = [
+            'label' => 'System Users',
+            'href' => route('admin.users.index'),
+            'active' => request()->routeIs('admin.users.*'),
+            'icon' => 'account',
+        ];
+    }
+
+    $items[] = [
+        'label' => 'Account',
+        'href' => route('profile.edit'),
+        'active' => request()->routeIs('profile.*'),
+        'icon' => 'account',
     ];
 @endphp
 
@@ -54,7 +67,9 @@
             <span class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#2F5F73] text-lg font-bold text-white">T</span>
             <span>
                 <span class="block text-lg font-bold text-slate-950">TaskFlow</span>
-                <span class="block text-xs font-medium text-slate-500">Project workspace</span>
+                <span class="block text-xs font-medium text-slate-500">
+                    {{ $role === 1 ? 'Admin workspace' : 'Member workspace' }}
+                </span>
             </span>
         </a>
 
@@ -79,12 +94,6 @@
             >
                 <span class="{{ $item['active'] ? 'text-[#2F5F73]' : 'text-slate-400' }} flex h-5 w-5 items-center justify-center">
                     @switch($item['icon'])
-                        @case('home')
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m4 11 8-7 8 7" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.5 10.5V20h11v-9.5" />
-                            </svg>
-                            @break
                         @case('dashboard')
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                 <rect x="4" y="4" width="7" height="7" rx="1.5" />
@@ -139,7 +148,9 @@
     <div class="border-t border-[#D6E5EC] p-4">
         <div class="rounded-lg border border-[#D6E5EC] bg-white p-4">
             <p class="text-sm font-semibold text-slate-900">Quick status</p>
-            <p class="mt-1 text-xs leading-5 text-slate-500">Shared navigation is ready for dashboard, teams, projects, milestones, tasks, time logs, and account pages.</p>
+            <p class="mt-1 text-xs leading-5 text-slate-500">
+                Shared navigation is ready for {{ $role === 1 ? 'admin' : 'member' }} dashboard, projects, milestones, tasks, teams, time logs, and account pages.
+            </p>
         </div>
     </div>
 </aside>

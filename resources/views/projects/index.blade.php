@@ -5,9 +5,11 @@
                 <p class="text-sm font-medium text-slate-600">Projects</p>
                 <h1 class="text-2xl font-bold text-slate-950">Project Screen</h1>
             </div>
-            <a href="{{ route('projects.create') }}" class="inline-flex items-center justify-center rounded-lg bg-[#2F5F73] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#244B5C]">
-                Create Project
-            </a>
+            @if(auth()->user()->role === 1)
+                <a href="{{ route('projects.create') }}" class="inline-flex items-center justify-center rounded-lg bg-[#2F5F73] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#244B5C]">
+                    Create Project
+                </a>
+            @endif
         </div>
     </x-slot>
 
@@ -40,12 +42,14 @@
                 </div>
                 <div class="mt-5 flex items-center gap-2 border-t border-slate-100 pt-3">
                     <a href="{{ route('projects.show', $project) }}" class="rounded-lg border border-[#D6E5EC] px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-[#EEF6FA]">View</a>
-                    <a href="{{ route('projects.edit', $project) }}" class="rounded-lg border border-[#D6E5EC] px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-[#EEF6FA]">Edit</a>
-                    <form method="POST" action="{{ route('projects.destroy', $project) }}" onsubmit="return confirm('Are you sure you want to delete this project?');" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50">Delete</button>
-                    </form>
+                    @if(auth()->user()->role === 1)
+                        <a href="{{ route('projects.edit', $project) }}" class="rounded-lg border border-[#D6E5EC] px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-[#EEF6FA]">Edit</a>
+                        <form method="POST" action="{{ route('projects.destroy', $project) }}" onsubmit="return confirm('Are you sure you want to delete this project?');" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50">Delete</button>
+                        </form>
+                    @endif
                 </div>
             </article>
         @empty

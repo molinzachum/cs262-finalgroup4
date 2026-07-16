@@ -13,14 +13,51 @@ use App\Http\Controllers\WebMilestoneController;
 
 
 Route::get('/', function () {
-    return view('welcome');
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+    return redirect()->route('login');
 });
 
-// Member Dashboard Route
 Route::get('/dashboard', function () {
-    $tasks = Task::all();
+    if (auth()->user()->role === 1) {
+        // Admin Dashboard
+        $projectsCount = \App\Models\Project::where('created_by', auth()->id())->count();
+        $tasksCount = Task::whereHas('milestone.project', function ($q) {
+            $q->where('created_by', auth()->id());
+        })->where('status', '!=', 'Completed')->count();
+        $milestonesCount = \App\Models\Milestone::whereHas('project', function ($q) {
+            $q->where('created_by', auth()->id());
+        })->count();
+        $hoursLogged = \App\Models\TimeLog::whereHas('task.milestone.project', function ($q) {
+            $q->where('created_by', auth()->id());
+        })->sum('hours_spent') ?: 0;
 
-    return view('dashboard', compact('tasks'));
+        $tasks = Task::whereHas('milestone.project', function ($q) {
+            $q->where('created_by', auth()->id());
+        })->with('project')->get();
+
+        return view('dashboard.admin', compact('projectsCount', 'tasksCount', 'milestonesCount', 'hoursLogged', 'tasks'));
+    } else {
+        // Member Dashboard
+        $projectsCount = \App\Models\Project::whereHas('members', function ($q) {
+            $q->where('user_id', auth()->id());
+        })->count();
+        $tasksCount = Task::whereHas('assignments', function ($q) {
+            $q->where('user_id', auth()->id());
+        })->where('status', '!=', 'Completed')->count();
+        $milestonesCount = \App\Models\Milestone::whereHas('project.members', function ($q) {
+            $q->where('user_id', auth()->id());
+        })->count();
+        $hoursLogged = \App\Models\TimeLog::where('user_id', auth()->id())->sum('hours_spent') ?: 0;
+
+        // Fetch tasks assigned to the member
+        $tasks = Task::whereHas('assignments', function ($q) {
+            $q->where('user_id', auth()->id());
+        })->with('project')->get();
+
+        return view('dashboard.member', compact('projectsCount', 'tasksCount', 'milestonesCount', 'hoursLogged', 'tasks'));
+    }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
@@ -102,12 +139,6 @@ Route::middleware(['auth', 'admin'])
     ->name('admin.')
     ->group(function () {
 
-        Route::get('/dashboard', function () {
-            return "Welcome to the Admin Dashboard! Only Role 1 can see this.";
-            // We will replace this with a real Blade view later
-        })->name('dashboard');
-
-
         Route::resource('users', UserController::class)
         ->only([
             'index',
@@ -117,6 +148,9 @@ Route::middleware(['auth', 'admin'])
         ]);
 
     });
+    Route::get('/dashboard', function () {
+        return redirect()->route('dashboard');
+    })->name('dashboard');
 
 
 require __DIR__.'/auth.php';

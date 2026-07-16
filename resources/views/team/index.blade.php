@@ -3,9 +3,22 @@
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
              <div>
                  <p class="text-sm font-medium text-slate-600">Workspace</p>
-                 <h1 class="text-2xl font-bold text-slate-950">
-                     {{ $project ? $project->name : 'Teams' }}
-                 </h1>
+                 <div class="flex items-center gap-3 mt-1">
+                     <h1 class="text-2xl font-bold text-slate-950">Teams</h1>
+                     @if($projects->count() > 0)
+                         <form method="GET" action="{{ route('team.index') }}" class="inline-block">
+                             <select name="project_id" onchange="this.form.submit()" class="rounded-lg border-slate-300 shadow-sm focus:border-[#7FA8BA] focus:ring-[#7FA8BA] text-sm p-1.5 border bg-white">
+                                 @foreach($projects as $proj)
+                                     <option value="{{ $proj->id }}" @selected($project && $project->id === $proj->id)>
+                                         {{ $proj->name }}
+                                     </option>
+                                 @endforeach
+                             </select>
+                         </form>
+                     @else
+                         <span class="text-slate-500 text-sm">(No projects created yet)</span>
+                     @endif
+                 </div>
              </div>
         </div>
     </x-slot>
@@ -51,13 +64,15 @@
                                     <span class="rounded-full bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700 ring-1 ring-inset ring-green-600/20">Active</span>
                                 </td>
                                 <td class="px-5 py-4">
-                                    <div class="flex justify-end gap-2">
-                                        <form method="POST" action="/project-members/{{ $member->id }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="rounded-lg border border-red-200 px-3 py-2 font-semibold text-red-600 hover:bg-red-50 text-xs">Remove</button>
-                                        </form>
-                                    </div>
+                                    @if(auth()->user()->role === 1)
+                                        <div class="flex justify-end gap-2">
+                                            <form method="POST" action="/project-members/{{ $member->id }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="rounded-lg border border-red-200 px-3 py-2 font-semibold text-red-600 hover:bg-red-50 text-xs">Remove</button>
+                                            </form>
+                                        </div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -66,7 +81,7 @@
             </div>
         </section>
 
-        @if($project)
+        @if($project && auth()->user()->role === 1)
             <aside class="rounded-lg border border-[#D6E5EC] bg-white p-5 shadow-sm">
                 <h2 class="text-lg font-semibold text-slate-950">Add Member</h2>
                 <form method="POST" action="/projects/{{ $project->id }}/members" class="mt-5 space-y-4">

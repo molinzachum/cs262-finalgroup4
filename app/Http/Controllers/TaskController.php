@@ -11,7 +11,12 @@ class TaskController extends Controller
     // Display all tasks
     public function index()
     {
-        $tasks = Task::with([
+        $tasks = Task::whereHas('milestone.project', function ($query) {
+            $query->where('created_by', auth()->id())
+                ->orWhereHas('members', function ($q) {
+                    $q->where('user_id', auth()->id());
+                });
+        })->with([
             'assignments.user',
             'creator'
         ])->get();
@@ -95,14 +100,26 @@ class TaskController extends Controller
 
     public function create()
     {
-        $milestones = Milestone::all();
+        $milestones = Milestone::whereHas('project', function ($query) {
+            $query->where('created_by', auth()->id())
+                ->orWhereHas('members', function ($q) {
+                    $q->where('user_id', auth()->id());
+                });
+        })->get();
+
         return view('tasks.create', compact('milestones'));
     }
 
     public function edit(Task $task)
     {
         $this->authorize('update', $task);
-        $milestones = Milestone::all();
+        $milestones = Milestone::whereHas('project', function ($query) {
+            $query->where('created_by', auth()->id())
+                ->orWhereHas('members', function ($q) {
+                    $q->where('user_id', auth()->id());
+                });
+        })->get();
+
         return view('tasks.edit', compact('task', 'milestones'));
     }
     

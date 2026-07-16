@@ -9,47 +9,72 @@ use Illuminate\Http\Request;
 class ProjectMemberController extends Controller
 {
     // Show all members in a project
- public function index(Request $request, Project $project = null)
-{
-    if (!$project || !$project->exists) {
-        $project = Project::first();
-    }
-
-    $search = $request->search;
-
-    if (!$project) {
-        return view('team.index', [
-            'project' => null,
-            'members' => collect(),
-            'search' => $search
-        ]);
-    }
-
-    $members = $project->members()
-        ->with([
-            'user.taskAssignments.task'
-        ])
-        ->when($search, function ($query) use ($search) {
-
-            $query->whereHas('user', function ($userQuery) use ($search) {
-
-                $userQuery->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
-
+    public function index(Request $request, Project $project = null)
+    {
+        // 1. Get all projects accessible by the authenticated user
+        $projectsQuery = Project::query();
+        if (auth()->user()->role === 1) {
+            $projectsQuery->where('created_by', auth()->id());
+        } else {
+            $projectsQuery->whereHas('members', function ($q) {
+                $q->where('user_id', auth()->id());
             });
+        }
+        $projects = $projectsQuery->get();
 
-        })
-        ->get();
+        // 2. Determine which project to load
+        $projectId = $request->query('project_id');
+        if ($projectId) {
+            $project = Project::find($projectId);
+        }
 
+        if (!$project || !$project->exists) {
+            $project = $projects->first();
+        }
 
-    $users = \App\Models\User::all();
+        // 3. Security check: non-admins can only view their own projects
+        if ($project && auth()->user()->role !== 1) {
+            $isMember = $project->members()->where('user_id', auth()->id())->exists();
+            if (!$isMember) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
 
-    return view('team.index', compact('project', 'members', 'search', 'users'));
-}
+        $search = $request->search;
+
+        if (!$project) {
+            return view('team.index', [
+                'project' => null,
+                'members' => collect(),
+                'search' => $search,
+                'projects' => $projects
+            ]);
+        }
+
+        $members = $project->members()
+            ->with([
+                'user.taskAssignments.task'
+            ])
+            ->when($search, function ($query) use ($search) {
+                $query->whereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->get();
+
+        $users = \App\Models\User::all();
+
+        return view('team.index', compact('project', 'members', 'search', 'users', 'projects'));
+    }
 
     // Add member to project
     public function store(Request $request, Project $project)
     {
+        if (auth()->user()->role !== 1) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'member_role' => 'required|string|max:255',
@@ -68,6 +93,10 @@ class ProjectMemberController extends Controller
     // Update member role
     public function update(Request $request, ProjectMember $member)
     {
+        if (auth()->user()->role !== 1) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'member_role' => 'required|string|max:255',
         ]);
@@ -82,6 +111,10 @@ class ProjectMemberController extends Controller
     // Remove member
     public function destroy(ProjectMember $member)
     {
+        if (auth()->user()->role !== 1) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $member->delete();
 
         return redirect()->back();

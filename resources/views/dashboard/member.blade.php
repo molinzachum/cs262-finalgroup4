@@ -2,34 +2,32 @@
     @php
         $stats = [
             [
-                'label' => 'Active Projects',
-                'value' => \App\Models\Project::count(),
-                'helper' => \App\Models\Project::where('status', 'Active')->count() . ' active status',
+                'label' => 'My Projects',
+                'value' => $projectsCount,
+                'helper' => 'Projects you belong to',
                 'icon' => 'P'
             ],
             [
-                'label' => 'Open Tasks',
-                'value' => \App\Models\Task::where('status', '!=', 'Completed')->count(),
-                'helper' => \App\Models\Task::where('priority', 'High')->where('status', '!=', 'Completed')->count() . ' high priority',
+                'label' => 'My Tasks',
+                'value' => $tasksCount,
+                'helper' => 'Tasks assigned to you',
                 'icon' => 'T'
             ],
             [
                 'label' => 'Milestones',
-                'value' => \App\Models\Milestone::count(),
-                'helper' => \App\Models\Milestone::where('status', 'In Progress')->count() . ' in progress',
+                'value' => $milestonesCount,
+                'helper' => 'In your projects',
                 'icon' => 'M'
             ],
             [
                 'label' => 'Hours Logged',
-                'value' => \App\Models\TimeLog::sum('hours_spent') ?: 0,
-                'helper' => 'Total workspace hours',
+                'value' => $hoursLogged,
+                'helper' => 'Your logged hours',
                 'icon' => 'H'
             ],
         ];
 
         $activities = [
-            ['title' => 'Website Redesign updated', 'meta' => 'Project status moved to In progress'],
-            ['title' => 'Wireframe Approval created', 'meta' => 'Milestone due July 20'],
             ['title' => 'Project screen layout logged', 'meta' => '2.5 hours added to Time Logs'],
         ];
     @endphp
@@ -37,12 +35,9 @@
     <x-slot name="header">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <p class="text-sm font-medium text-slate-600">Overview</p>
-                <h1 class="text-2xl font-bold text-slate-950">Dashboard</h1>
+                <p class="text-sm font-medium text-slate-600">Workspace</p>
+                <h1 class="text-2xl font-bold text-slate-950">My Dashboard</h1>
             </div>
-            <a href="#" class="inline-flex items-center justify-center rounded-lg bg-[#2F5F73] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#244B5C]">
-                New Project
-            </a>
         </div>
     </x-slot>
 
@@ -73,16 +68,16 @@
                 <div class="flex items-center justify-between gap-4">
                     <div>
                         <h2 class="text-lg font-semibold text-slate-950">Quick Access</h2>
-                        <p class="mt-1 text-sm text-slate-500">Jump into the main project management screens.</p>
+                        <p class="mt-1 text-sm text-slate-500">Jump into your project management screens.</p>
                     </div>
                 </div>
 
                 <div class="mt-5 grid gap-3 sm:grid-cols-2">
-                    <a href="#" class="rounded-lg border border-[#D6E5EC] bg-[#F8FBFD] p-4 transition hover:border-[#9BBCCA] hover:bg-[#EEF6FA]">
-                        <p class="font-semibold text-[#2F5F73]">Projects</p>
-                        <p class="mt-1 text-sm text-slate-500">View, create, edit, and delete projects.</p>
+                    <a href="{{ route('projects.index') }}" class="rounded-lg border border-[#D6E5EC] bg-[#F8FBFD] p-4 transition hover:border-[#9BBCCA] hover:bg-[#EEF6FA]">
+                        <p class="font-semibold text-[#2F5F73]">My Projects</p>
+                        <p class="mt-1 text-sm text-slate-500">View and track projects in your workspace.</p>
                     </a>
-                    <a href="#" class="rounded-lg border border-[#D6E5EC] bg-[#F8FBFD] p-4 transition hover:border-[#9BBCCA] hover:bg-[#EEF6FA]">
+                    <a href="{{ route('milestones.index') }}" class="rounded-lg border border-[#D6E5EC] bg-[#F8FBFD] p-4 transition hover:border-[#9BBCCA] hover:bg-[#EEF6FA]">
                         <p class="font-semibold text-[#2F5F73]">Milestones</p>
                         <p class="mt-1 text-sm text-slate-500">Track project checkpoints and due dates.</p>
                     </a>
@@ -91,23 +86,27 @@
                         <p class="mt-1 text-sm text-slate-500">Review and add work hours.</p>
                     </a>
                     <a href="{{ route('team.index') }}" class="rounded-lg border border-[#D6E5EC] bg-[#F8FBFD] p-4 transition hover:border-[#9BBCCA] hover:bg-[#EEF6FA]">
-                        <p class="font-semibold text-[#2F5F73]">Teams</p>
-                        <p class="mt-1 text-sm text-slate-500">Manage members and roles.</p>
+                        <p class="font-semibold text-[#2F5F73]">Team Members</p>
+                        <p class="mt-1 text-sm text-slate-500">View members and roles.</p>
                     </a>
                 </div>
             </section>
 
-            <!-- Open Tasks Section -->
+            <!-- Assigned Tasks Section -->
             <section class="rounded-lg border border-[#D6E5EC] bg-white p-5 shadow-sm">
                 <div class="mb-4">
-                    <h2 class="text-lg font-semibold text-slate-950">Open Tasks</h2>
-                    <p class="mt-1 text-sm text-slate-500">A list of all active tasks in the workspace.</p>
+                    <h2 class="text-lg font-semibold text-slate-950">Assigned Tasks</h2>
+                    <p class="mt-1 text-sm text-slate-500">Active tasks currently assigned to you.</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    @foreach ($tasks as $task)
+                    @forelse ($tasks as $task)
                         <x-task-card :task="$task" />
-                    @endforeach
+                    @empty
+                        <div class="col-span-full text-center text-sm py-6 text-slate-500">
+                            No active tasks assigned to you.
+                        </div>
+                    @endforelse
                 </div>
             </section>
         </div>

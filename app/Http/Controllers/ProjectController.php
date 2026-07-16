@@ -10,7 +10,15 @@ class ProjectController extends Controller
     // Show all projects
     public function index()
     {
-        $projects = Project::with('milestones.tasks')->get();
+        $query = Project::query();
+        if (auth()->user()->role === 1) {
+            $query->where('created_by', auth()->id());
+        } else {
+            $query->whereHas('members', function ($q) {
+                $q->where('user_id', auth()->id());
+            });
+        }
+        $projects = $query->with('milestones.tasks')->get();
 
         return view('projects.index', compact('projects'));
     }
@@ -18,12 +26,20 @@ class ProjectController extends Controller
     // Show create project form
     public function create()
     {
+        if (auth()->user()->role !== 1) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return view('projects.create');
     }
 
     // Create project
     public function store(Request $request)
     {
+        if (auth()->user()->role !== 1) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -44,10 +60,17 @@ class ProjectController extends Controller
         return redirect('/projects');
     }
 
-
     // Show one project
     public function show(Project $project)
     {
+        // Scope project access: members can only see projects they belong to.
+        if (auth()->user()->role !== 1) {
+            $isMember = $project->members()->where('user_id', auth()->id())->exists();
+            if (!$isMember) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
+
         $project->load([
             'milestones.tasks',
             'members.user'
@@ -59,13 +82,19 @@ class ProjectController extends Controller
     // Show edit project form
     public function edit(Project $project)
     {
+        if (auth()->user()->role !== 1) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return view('projects.edit', compact('project'));
     }
 
     // Update project
     public function update(Request $request, Project $project)
     {
-        $this->authorize('update', $project);
+        if (auth()->user()->role !== 1) {
+            abort(403, 'Unauthorized action.');
+        }
 
         $request->validate([
             'name' => 'string|max:255',
@@ -80,11 +109,12 @@ class ProjectController extends Controller
         return redirect('/projects');
     }
 
-
     // Delete project
     public function destroy(Project $project)
     {
-        $this->authorize('delete', $project);
+        if (auth()->user()->role !== 1) {
+            abort(403, 'Unauthorized action.');
+        }
 
         $project->delete();
 
