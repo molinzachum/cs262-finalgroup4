@@ -3,47 +3,65 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
-use App\Http\Resources\MilestoneResource;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use App\Http\Requests\StoreMilestoneRequest;
-use App\Models\Milestone;   
+use Illuminate\Http\Request;
 
 class MilestoneController extends Controller
 {
-    /**
-     * Get all milestones for a specific project.
-     */
-    public function index(Project $project): AnonymousResourceCollection
+    public function index()
     {
-        // Leverage the Eloquent relationship directly from the project!
-        $milestones = $project->milestones()
-            ->withCount(['tasks', 'completedTasks'])
-            ->orderBy('due_date', 'asc')
-            ->get();
+        $milestones = Milestone::with('project')->latest()->get();
 
-        return MilestoneResource::collection($milestones);
+        return view('milestones.index', compact('milestones'));
     }
 
-    /**
-     * Store a newly created milestone in storage.
-     */
-    public function store(StoreMilestoneRequest $request, Project $project)
+    public function create()
     {
-        // 1. Retrieve only the validated input data (strips out any malicious/unwanted fields)
-        $validated = $request->validated();
-        
-        // 2. Automatically link this milestone to the parent project from the URL
-        $validated['project_id'] = $project->id;
-        
-        // 3. Create the milestone in MySQL
-        $milestone = Milestone::create($validated);
-        
-        // 4. Load relationship counts so our MilestoneResource doesn't default to 0 tasks incorrectly
-        $milestone->loadCount(['tasks', 'completedTasks']);
+        $projects = Project::orderBy('name')->get();
 
-        // 5. Return the formatted resource with an HTTP 201 Created status code!
-        return (new MilestoneResource($milestone))
-            ->response()
-            ->setStatusCode(201);
+        return view('milestones.create', compact('projects'));
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'project_id' => 'nullable|exists:projects,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|string|max:255',
+            'due_date' => 'nullable|date',
+        ]);
+
+        Milestone::create($data);
+
+        return redirect()->route('milestones.index')->with('status', 'Milestone created.');
+    }
+
+    public function edit(Milestone $milestone)
+    {
+        $projects = Project::orderBy('name')->get();
+
+        return view('milestones.edit', compact('milestone', 'projects'));
+    }
+
+    public function update(Request $request, Milestone $milestone)
+    {
+        $data = $request->validate([
+            'project_id' => 'nullable|exists:projects,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|string|max:255',
+            'due_date' => 'nullable|date',
+        ]);
+
+        $milestone->update($data);
+
+        return redirect()->route('milestones.index')->with('status', 'Milestone updated.');
+    }
+
+    public function destroy(Milestone $milestone)
+    {
+        $milestone->delete();
+
+        return redirect()->route('milestones.index')->with('status', 'Milestone deleted.');
     }
 }
