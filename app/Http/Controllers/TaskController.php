@@ -4,13 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use App\Models\Milestone;
 
 class TaskController extends Controller
 {
     // Display all tasks
     public function index()
     {
-        $tasks = Task::with([
+        $tasks = Task::whereHas('milestone.project', function ($query) {
+            $query->where('created_by', auth()->id())
+                ->orWhereHas('members', function ($q) {
+                    $q->where('user_id', auth()->id());
+                });
+        })->with([
             'assignments.user',
             'creator'
         ])->get();
@@ -23,17 +29,17 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'project_id' => 'required|exists:projects,id',
+            'milestone_id' => 'required|exists:milestones,id',
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'desc' => 'nullable|string',
             'priority' => 'nullable|string',
             'due_date' => 'nullable|date',
         ]);
 
         Task::create([
-            'project_id' => $request->project_id,
+            'milestone_id' => $request->milestone_id,
             'title' => $request->title,
-            'description' => $request->description,
+            'desc' => $request->desc,
             'status' => 'To-do',
             'priority' => $request->priority ?? 'Medium',
             'due_date' => $request->due_date,
@@ -59,9 +65,11 @@ class TaskController extends Controller
     // Update task
     public function update(Request $request, Task $task)
     {
+        $this->authorize('update', $task);
+
         $request->validate([
             'title' => 'sometimes|string|max:255',
-            'description' => 'nullable|string',
+            'desc' => 'nullable|string',
             'status' => 'sometimes|in:To-do,In-progress,Done',
             'priority' => 'sometimes|string',
             'due_date' => 'nullable|date',
@@ -70,7 +78,7 @@ class TaskController extends Controller
 
         $task->update([
             'title' => $request->title,
-            'description' => $request->description,
+            'desc' => $request->desc,
             'status' => $request->status,
             'priority' => $request->priority,
             'due_date' => $request->due_date,
@@ -83,8 +91,36 @@ class TaskController extends Controller
     // Delete task
     public function destroy(Task $task)
     {
+        $this->authorize('delete', $task);
+
         $task->delete();
 
         return redirect('/tasks');
     }
+
+    public function create()
+    {
+        $milestones = Milestone::whereHas('project', function ($query) {
+            $query->where('created_by', auth()->id())
+                ->orWhereHas('members', function ($q) {
+                    $q->where('user_id', auth()->id());
+                });
+        })->get();
+
+        return view('tasks.create', compact('milestones'));
+    }
+
+    public function edit(Task $task)
+    {
+        $this->authorize('update', $task);
+        $milestones = Milestone::whereHas('project', function ($query) {
+            $query->where('created_by', auth()->id())
+                ->orWhereHas('members', function ($q) {
+                    $q->where('user_id', auth()->id());
+                });
+        })->get();
+
+        return view('tasks.edit', compact('task', 'milestones'));
+    }
+    
 }

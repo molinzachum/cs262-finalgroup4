@@ -1,11 +1,7 @@
 @php
+    $role = auth()->user()->role;
+    
     $items = [
-        [
-            'label' => 'Home',
-            'href' => url('/'),
-            'active' => request()->is('/'),
-            'icon' => 'home',
-        ],
         [
             'label' => 'Dashboard',
             'href' => route('dashboard'),
@@ -13,10 +9,16 @@
             'icon' => 'dashboard',
         ],
         [
-            'label' => 'Teams',
-            'href' => route('team.index'),
-            'active' => request()->routeIs('team.*'),
-            'icon' => 'teams',
+            'label' => 'Projects',
+            'href' => route('projects.index'),
+            'active' => request()->routeIs('projects.*'),
+            'icon' => 'projects',
+        ],
+        [
+            'label' => 'Milestones',
+            'href' => route('milestones.index'),
+            'active' => request()->routeIs('milestones.*'),
+            'icon' => 'milestones',
         ],
         [
             'label' => 'Tasks',
@@ -31,30 +33,49 @@
             'icon' => 'time',
         ],
         [
-            'label' => 'Account',
-            'href' => route('profile.edit'),
-            'active' => request()->routeIs('profile.*'),
-            'icon' => 'account',
+            'label' => 'Teams',
+            'href' => route('team.index'),
+            'active' => request()->routeIs('team.*'),
+            'icon' => 'teams',
         ],
+    ];
+
+    // Only Admins see the system users management link
+    if ($role === 1) {
+        $items[] = [
+            'label' => 'System Users',
+            'href' => route('admin.users.index'),
+            'active' => request()->routeIs('admin.users.*'),
+            'icon' => 'account',
+        ];
+    }
+
+    $items[] = [
+        'label' => 'Account',
+        'href' => route('profile.edit'),
+        'active' => request()->routeIs('profile.*'),
+        'icon' => 'account',
     ];
 @endphp
 
 <aside
-    class="fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-slate-200 bg-white shadow-xl shadow-slate-950/5 transition-transform duration-200 lg:translate-x-0"
+    class="fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col border-r border-[#D6E5EC] bg-[#F8FBFD] shadow-xl shadow-slate-950/5 transition-transform duration-200 lg:translate-x-0"
     :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': ! sidebarOpen }"
 >
-    <div class="flex h-20 items-center justify-between border-b border-slate-200 px-6">
+    <div class="flex h-20 items-center justify-between border-b border-[#D6E5EC] px-6">
         <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
-            <span class="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-600 text-lg font-bold text-white">T</span>
+            <span class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#2F5F73] text-lg font-bold text-white">T</span>
             <span>
                 <span class="block text-lg font-bold text-slate-950">TaskFlow</span>
-                <span class="block text-xs font-medium text-slate-500">Project workspace</span>
+                <span class="block text-xs font-medium text-slate-500">
+                    {{ $role === 1 ? 'Admin workspace' : 'Member workspace' }}
+                </span>
             </span>
         </a>
 
         <button
             type="button"
-            class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 lg:hidden"
+            class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-[#E5F0F5] lg:hidden"
             @click="sidebarOpen = false"
             aria-label="Close sidebar"
         >
@@ -68,17 +89,11 @@
         @foreach ($items as $item)
             <a
                 href="{{ $item['href'] }}"
-                class="{{ $item['active'] ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950' }} flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition"
+                class="{{ $item['active'] ? 'bg-[#C4D8E2] text-slate-950 ring-1 ring-[#9BBCCA]' : 'text-slate-600 hover:bg-[#E5F0F5] hover:text-slate-950' }} flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition"
                 @click="sidebarOpen = false"
             >
-                <span class="{{ $item['active'] ? 'text-emerald-600' : 'text-slate-400' }} flex h-5 w-5 items-center justify-center">
+                <span class="{{ $item['active'] ? 'text-[#2F5F73]' : 'text-slate-400' }} flex h-5 w-5 items-center justify-center">
                     @switch($item['icon'])
-                        @case('home')
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m4 11 8-7 8 7" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.5 10.5V20h11v-9.5" />
-                            </svg>
-                            @break
                         @case('dashboard')
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                 <rect x="4" y="4" width="7" height="7" rx="1.5" />
@@ -101,6 +116,16 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m4 7 .7.7L6 6.4M4 12l.7.7L6 11.4M4 17l.7.7L6 16.4" />
                             </svg>
                             @break
+                        @case('projects')
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 7.5A2.5 2.5 0 0 1 6.5 5H10l2 2h5.5A2.5 2.5 0 0 1 20 9.5v7A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" />
+                            </svg>
+                            @break
+                        @case('milestones')
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 20V5m0 0h11l-2 4 2 4H5" />
+                            </svg>
+                            @break
                         @case('time')
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                 <circle cx="12" cy="12" r="8" />
@@ -120,10 +145,12 @@
         @endforeach
     </nav>
 
-    <div class="border-t border-slate-200 p-4">
-        <div class="rounded-lg bg-slate-50 p-4">
+    <div class="border-t border-[#D6E5EC] p-4">
+        <div class="rounded-lg border border-[#D6E5EC] bg-white p-4">
             <p class="text-sm font-semibold text-slate-900">Quick status</p>
-            <p class="mt-1 text-xs leading-5 text-slate-500">Shared navigation is ready for the home, dashboard, teams, time logs, and account pages.</p>
+            <p class="mt-1 text-xs leading-5 text-slate-500">
+                Shared navigation is ready for {{ $role === 1 ? 'admin' : 'member' }} dashboard, projects, milestones, tasks, teams, time logs, and account pages.
+            </p>
         </div>
     </div>
 </aside>
