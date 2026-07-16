@@ -1,16 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-        <div>
-<<<<<<< HEAD
             <p class="text-sm font-medium text-emerald-600">Workspace</p>
             <h1 class="text-2xl font-bold text-slate-950">
-                {{ $project->proj_name }}
+                {{ $project ? $project->name : 'Teams' }}
             </h1>
-=======
-            <p class="text-sm font-medium text-slate-600">Workspace</p>
-            <h1 class="text-2xl font-bold text-slate-950">Teams</h1>
->>>>>>> origin/feature/projects-ui
-        </div>
     </x-slot>
 
     <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">

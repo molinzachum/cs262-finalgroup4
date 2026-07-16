@@ -15,7 +15,11 @@ class MilestoneApiTest extends TestCase
     public function test_milestone_endpoint_returns_correct_progress_calculations(): void
     {
         // 1. Arrange: Create test data
-        $project = Project::create(['name' => 'Test Project']);
+        $user = \App\Models\User::factory()->create();
+        $project = Project::create([
+            'name' => 'Test Project',
+            'created_by' => $user->id,
+        ]);
         $milestone = Milestone::create([
             'project_id' => $project->id,
             'title' => 'Initial Research',
@@ -23,8 +27,8 @@ class MilestoneApiTest extends TestCase
         ]);
 
         // Add 2 completed tasks and 3 pending tasks (5 total -> 40% completion)
-        Task::factory()->count(2)->create(['milestone_id' => $milestone->id, 'status' => 'Completed']);
-        Task::factory()->count(3)->create(['milestone_id' => $milestone->id, 'status' => 'Pending']);
+        Task::factory()->count(2)->create(['milestone_id' => $milestone->id, 'status' => 'Completed', 'created_by' => $user->id]);
+        Task::factory()->count(3)->create(['milestone_id' => $milestone->id, 'status' => 'Pending', 'created_by' => $user->id]);
 
         // 2. Act: Hit the API endpoint
         $response = $this->getJson("/api/projects/{$project->id}/milestones");
