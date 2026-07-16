@@ -61,24 +61,7 @@ Route::middleware('auth')->group(function () {
         [ProfileController::class, 'destroy']
     )->name('profile.destroy');
 });
-<<<<<<< HEAD
     
-=======
-
-    // Task Routes
-    Route::resource('tasks', TaskController::class);
-
-    Route::post(
-        '/tasks/{task}/assign',
-        [TaskAssignmentController::class, 'store']
-    );
-
-    Route::delete(
-        '/task-assignment/{assignment}',
-        [TaskAssignmentController::class, 'destroy']
-    );
-
->>>>>>> 9296df5 (Connect projects UI to database)
 // Admin Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
