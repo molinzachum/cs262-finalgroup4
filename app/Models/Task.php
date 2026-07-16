@@ -24,6 +24,8 @@ class Task extends Model
 
     protected $casts = [
         'due_date' => 'datetime',
+        'created_by' => 'integer',
+        'milestone_id' => 'integer',
     ];
 
     public function milestone(): BelongsTo

@@ -37,9 +37,9 @@ class TaskController extends Controller
 
         $milestone = Milestone::findOrFail($request->milestone_id);
         $project = $milestone->project;
-        if (auth()->user()->role !== 1) {
+        if ((int) auth()->user()->role !== 1) {
             $isMember = $project->members()->where('user_id', auth()->id())->exists();
-            $isOwner = $project->created_by === auth()->id();
+            $isOwner = (int) $project->created_by == (int) auth()->id();
             if (!$isMember && !$isOwner) {
                 abort(403, 'Unauthorized action.');
             }
@@ -61,11 +61,11 @@ class TaskController extends Controller
     // Show single task
     public function show(Task $task)
     {
-        if (auth()->user()->role !== 1) {
+        if ((int) auth()->user()->role !== 1) {
             $project = $task->milestone->project;
             $isMember = $project->members()->where('user_id', auth()->id())->exists();
             $isAssignee = $task->assignments()->where('user_id', auth()->id())->exists();
-            $isCreator = $task->created_by === auth()->id();
+            $isCreator = (int) $task->created_by == (int) auth()->id();
 
             if (!$isMember && !$isAssignee && !$isCreator) {
                 abort(403, 'Unauthorized action.');
@@ -96,9 +96,9 @@ class TaskController extends Controller
 
         if ($request->has('milestone_id')) {
             $milestone = Milestone::findOrFail($request->milestone_id);
-            if (auth()->user()->role !== 1) {
+            if ((int) auth()->user()->role !== 1) {
                 $isMember = $milestone->project->members()->where('user_id', auth()->id())->exists();
-                $isOwner = $milestone->project->created_by === auth()->id();
+                $isOwner = (int) $milestone->project->created_by == (int) auth()->id();
                 if (!$isMember && !$isOwner) {
                     abort(403, 'Unauthorized action.');
                 }
