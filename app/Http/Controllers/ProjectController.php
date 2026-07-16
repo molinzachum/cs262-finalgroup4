@@ -10,7 +10,12 @@ class ProjectController extends Controller
     // Show all projects
     public function index()
     {
-        $projects = Project::with('milestones.tasks')->get();
+        $projects = Project::where('created_by', auth()->id())
+            ->orWhereHas('members', function ($query) {
+                $query->where('user_id', auth()->id());
+            })
+            ->with('milestones.tasks')
+            ->get();
 
         return view('projects.index', compact('projects'));
     }

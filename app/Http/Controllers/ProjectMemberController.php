@@ -12,7 +12,11 @@ class ProjectMemberController extends Controller
  public function index(Request $request, Project $project = null)
 {
     if (!$project || !$project->exists) {
-        $project = Project::first();
+        $project = Project::where('created_by', auth()->id())
+            ->orWhereHas('members', function ($query) {
+                $query->where('user_id', auth()->id());
+            })
+            ->first();
     }
 
     $search = $request->search;

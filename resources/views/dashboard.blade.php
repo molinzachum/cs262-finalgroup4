@@ -3,26 +3,41 @@
         $stats = [
             [
                 'label' => 'Active Projects',
-                'value' => \App\Models\Project::count(),
-                'helper' => \App\Models\Project::where('status', 'Active')->count() . ' active status',
+                'value' => \App\Models\Project::where('created_by', auth()->id())->orWhereHas('members', function($q) { $q->where('user_id', auth()->id()); })->count(),
+                'helper' => \App\Models\Project::where('status', 'Active')->where(function($query) {
+                    $query->where('created_by', auth()->id())
+                        ->orWhereHas('members', function($q) { $q->where('user_id', auth()->id()); });
+                })->count() . ' active status',
                 'icon' => 'P'
             ],
             [
                 'label' => 'Open Tasks',
-                'value' => \App\Models\Task::where('status', '!=', 'Completed')->count(),
-                'helper' => \App\Models\Task::where('priority', 'High')->where('status', '!=', 'Completed')->count() . ' high priority',
+                'value' => \App\Models\Task::where('status', '!=', 'Completed')->whereHas('milestone.project', function($query) {
+                    $query->where('created_by', auth()->id())
+                        ->orWhereHas('members', function($q) { $q->where('user_id', auth()->id()); });
+                })->count(),
+                'helper' => \App\Models\Task::where('priority', 'High')->where('status', '!=', 'Completed')->whereHas('milestone.project', function($query) {
+                    $query->where('created_by', auth()->id())
+                        ->orWhereHas('members', function($q) { $q->where('user_id', auth()->id()); });
+                })->count() . ' high priority',
                 'icon' => 'T'
             ],
             [
                 'label' => 'Milestones',
-                'value' => \App\Models\Milestone::count(),
-                'helper' => \App\Models\Milestone::where('status', 'In Progress')->count() . ' in progress',
+                'value' => \App\Models\Milestone::whereHas('project', function($query) {
+                    $query->where('created_by', auth()->id())
+                        ->orWhereHas('members', function($q) { $q->where('user_id', auth()->id()); });
+                })->count(),
+                'helper' => \App\Models\Milestone::where('status', 'In Progress')->whereHas('project', function($query) {
+                    $query->where('created_by', auth()->id())
+                        ->orWhereHas('members', function($q) { $q->where('user_id', auth()->id()); });
+                })->count() . ' in progress',
                 'icon' => 'M'
             ],
             [
                 'label' => 'Hours Logged',
-                'value' => \App\Models\TimeLog::sum('hours_spent') ?: 0,
-                'helper' => 'Total workspace hours',
+                'value' => \App\Models\TimeLog::where('user_id', auth()->id())->sum('hours_spent') ?: 0,
+                'helper' => 'Your logged hours',
                 'icon' => 'H'
             ],
         ];

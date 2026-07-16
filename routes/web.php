@@ -16,9 +16,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Member Dashboard Route
 Route::get('/dashboard', function () {
-    $tasks = Task::all();
+    $tasks = Task::whereHas('milestone.project', function ($query) {
+        $query->where('created_by', auth()->id())
+            ->orWhereHas('members', function ($q) {
+                $q->where('user_id', auth()->id());
+            });
+    })->get();
 
     return view('dashboard', compact('tasks'));
 })->middleware(['auth', 'verified'])->name('dashboard');

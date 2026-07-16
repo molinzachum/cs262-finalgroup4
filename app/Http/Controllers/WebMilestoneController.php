@@ -10,13 +10,24 @@ class WebMilestoneController extends Controller
 {
     public function index()
     {
-        $milestones = Milestone::with('project')->get();
+        $milestones = Milestone::whereHas('project', function ($query) {
+            $query->where('created_by', auth()->id())
+                ->orWhereHas('members', function ($q) {
+                    $q->where('user_id', auth()->id());
+                });
+        })->with('project')->get();
+
         return view('milestones.index', compact('milestones'));
     }
 
     public function create()
     {
-        $projects = Project::all();
+        $projects = Project::where('created_by', auth()->id())
+            ->orWhereHas('members', function ($query) {
+                $query->where('user_id', auth()->id());
+            })
+            ->get();
+
         return view('milestones.create', compact('projects'));
     }
 
@@ -43,7 +54,12 @@ class WebMilestoneController extends Controller
 
     public function edit(Milestone $milestone)
     {
-        $projects = Project::all();
+        $projects = Project::where('created_by', auth()->id())
+            ->orWhereHas('members', function ($query) {
+                $query->where('user_id', auth()->id());
+            })
+            ->get();
+
         return view('milestones.edit', compact('milestone', 'projects'));
     }
 
