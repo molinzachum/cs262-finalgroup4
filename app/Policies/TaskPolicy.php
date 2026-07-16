@@ -9,8 +9,21 @@ class TaskPolicy
 {
     public function update(User $user, Task $task): bool
     {
+        // Admins can always update
         if ($user->role === 1) return true;
-        return $task->assignees->contains('id', $user->id);
+
+        // Task creator can update
+        if ($task->created_by === $user->id) return true;
+
+        // Assigned users can update
+        if ($task->assignees->contains('id', $user->id)) return true;
+
+        // Project members can update
+        $project = $task->milestone->project;
+        if ($project->members()->where('user_id', $user->id)->exists()) return true;
+        if ($project->created_by === $user->id) return true;
+
+        return false;
     }
 
     public function delete(User $user, Task $task): bool
