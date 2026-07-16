@@ -14,6 +14,13 @@ class ProjectController extends Controller
 
         return view('projects.index', compact('projects'));
     }
+
+    // Show create project form
+    public function create()
+{
+    return view('projects.create');
+}
+
     // Create project
     public function store(Request $request)
     {

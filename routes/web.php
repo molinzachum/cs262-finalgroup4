@@ -23,22 +23,12 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
 
     // Task Routes
-    Route::resource('tasks', TaskController::class);
+    Route::get('/teams', [ProjectMemberController::class, 'index'])->name('team.index');
+    Route::resource('milestones', \App\Http\Controllers\WebMilestoneController::class);
 
-    Route::view('/teams', 'team.index')
-    ->name('team.index');
+    Route::view('/time-logs', 'timelogs.index')->name('timelogs.index');
 
-Route::view('/milestones', 'milestones.index')
-    ->name('milestones.index');
-    Route::post('/tasks/{task}/assign',
-        [TaskAssignmentController::class, 'store']
-    );
-
-    Route::delete('/task-assignment/{assignment}',
-        [TaskAssignmentController::class, 'destroy']
-    );
-
-    // Project Routes
+    // Project routes
     Route::resource('projects', ProjectController::class);
 
     // Project Member (Teams) Routes
@@ -71,7 +61,24 @@ Route::view('/milestones', 'milestones.index')
         [ProfileController::class, 'destroy']
     )->name('profile.destroy');
 });
+<<<<<<< HEAD
     
+=======
+
+    // Task Routes
+    Route::resource('tasks', TaskController::class);
+
+    Route::post(
+        '/tasks/{task}/assign',
+        [TaskAssignmentController::class, 'store']
+    );
+
+    Route::delete(
+        '/task-assignment/{assignment}',
+        [TaskAssignmentController::class, 'destroy']
+    );
+
+>>>>>>> 9296df5 (Connect projects UI to database)
 // Admin Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
