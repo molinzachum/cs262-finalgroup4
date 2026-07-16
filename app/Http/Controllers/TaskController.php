@@ -63,7 +63,10 @@ class TaskController extends Controller
         if (auth()->user()->role !== 1) {
             $project = $task->milestone->project;
             $isMember = $project->members()->where('user_id', auth()->id())->exists();
-            if (!$isMember) {
+            $isAssignee = $task->assignments()->where('user_id', auth()->id())->exists();
+            $isCreator = $task->created_by === auth()->id();
+
+            if (!$isMember && !$isAssignee && !$isCreator) {
                 abort(403, 'Unauthorized action.');
             }
         }
