@@ -2,8 +2,11 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MilestoneController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskAssignmentController;
+use App\Http\Controllers\TimeLogController;
 
 
 Route::get('/', function () {
@@ -13,9 +16,11 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
 
     Route::resource('tasks', TaskController::class);
+    Route::resource('projects', ProjectController::class);
+    Route::resource('milestones', MilestoneController::class)->except(['show']);
+    Route::resource('timelogs', TimeLogController::class)->except(['show']);
 
     Route::view('/teams', 'team.index')->name('team.index');
-    Route::view('/time-logs', 'timelogs.index')->name('timelogs.index');
 
     Route::post('/tasks/{task}/assign',
         [TaskAssignmentController::class, 'store']

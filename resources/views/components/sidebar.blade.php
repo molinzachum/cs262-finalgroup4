@@ -13,6 +13,18 @@
             'icon' => 'teams',
         ],
         [
+            'label' => 'Projects',
+            'href' => route('projects.index'),
+            'active' => request()->routeIs('projects.*'),
+            'icon' => 'projects',
+        ],
+        [
+            'label' => 'Milestones',
+            'href' => route('milestones.index'),
+            'active' => request()->routeIs('milestones.*'),
+            'icon' => 'milestones',
+        ],
+        [
             'label' => 'Tasks',
             'href' => route('tasks.index'),
             'active' => request()->routeIs('tasks.*'),
@@ -93,6 +105,16 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h11M8 12h11M8 17h11" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m4 7 .7.7L6 6.4M4 12l.7.7L6 11.4M4 17l.7.7L6 16.4" />
+                            </svg>
+                            @break
+                        @case('projects')
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 7.5A2.5 2.5 0 0 1 6.5 5H10l2 2h5.5A2.5 2.5 0 0 1 20 9.5v7A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-9Z" />
+                            </svg>
+                            @break
+                        @case('milestones')
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 20V5m0 0h11l-2 4 2 4H5" />
                             </svg>
                             @break
                         @case('time')

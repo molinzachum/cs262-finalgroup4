@@ -4,29 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Task extends Model
+class Project extends Model
 {
     protected $fillable = [
-        'project_id',
-        'title',
+        'name',
         'description',
         'status',
-        'priority',
+        'start_date',
         'due_date',
-        'created_by'
+        'created_by',
     ];
 
-   public function assignments()
-{
-    return $this->hasMany(TaskAssignment::class);
-}
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function project()
+    public function milestones()
     {
-        return $this->belongsTo(Project::class);
+        return $this->hasMany(Milestone::class);
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
     }
 }
