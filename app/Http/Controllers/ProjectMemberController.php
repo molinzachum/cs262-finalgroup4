@@ -9,11 +9,21 @@ use Illuminate\Http\Request;
 class ProjectMemberController extends Controller
 {
     // Show all members in a project
- public function index(Request $request)
+ public function index(Request $request, Project $project = null)
 {
-    $project = Project::firstOrFail();
+    if (!$project || !$project->exists) {
+        $project = Project::first();
+    }
 
     $search = $request->search;
+
+    if (!$project) {
+        return view('team.index', [
+            'project' => null,
+            'members' => collect(),
+            'search' => $search
+        ]);
+    }
 
     $members = $project->members()
         ->with([
@@ -31,11 +41,10 @@ class ProjectMemberController extends Controller
         })
         ->get();
 
-    return view('team.index', compact(
-        'project',
-        'members',
-        'search'
-    ));
+
+    $users = \App\Models\User::all();
+
+    return view('team.index', compact('project', 'members', 'search', 'users'));
 }
 
     // Add member to project

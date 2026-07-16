@@ -10,22 +10,22 @@ class ProjectController extends Controller
     // Show all projects
     public function index()
     {
-        $projects = Project::with('tasks')->get();
+        $projects = Project::with('milestones.tasks')->get();
 
         return view('projects.index', compact('projects'));
     }
 
     // Show create project form
     public function create()
-{
-    return view('projects.create');
-}
+    {
+        return view('projects.create');
+    }
 
     // Create project
     public function store(Request $request)
     {
         $request->validate([
-            'proj_name' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'status' => 'nullable|string',
             'start_date' => 'nullable|date',
@@ -33,7 +33,7 @@ class ProjectController extends Controller
         ]);
 
         Project::create([
-            'proj_name' => $request->proj_name,
+            'name' => $request->name,
             'description' => $request->description,
             'status' => $request->status ?? 'Active',
             'created_by' => auth()->id(),
@@ -49,19 +49,26 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         $project->load([
-            'tasks',
+            'milestones.tasks',
             'members.user'
         ]);
 
         return view('projects.show', compact('project'));
     }
 
+    // Show edit project form
+    public function edit(Project $project)
+    {
+        return view('projects.edit', compact('project'));
+    }
 
     // Update project
     public function update(Request $request, Project $project)
     {
+        $this->authorize('update', $project);
+
         $request->validate([
-            'proj_name' => 'string|max:255',
+            'name' => 'string|max:255',
             'description' => 'nullable|string',
             'status' => 'string',
             'start_date' => 'nullable|date',
@@ -77,6 +84,8 @@ class ProjectController extends Controller
     // Delete project
     public function destroy(Project $project)
     {
+        $this->authorize('delete', $project);
+
         $project->delete();
 
         return redirect('/projects');

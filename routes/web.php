@@ -8,6 +8,9 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectMemberController;
 use App\Http\Controllers\Admin\UserController;
 use App\Models\Task;
+use App\Http\Controllers\TimeLogController;
+use App\Http\Controllers\WebMilestoneController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -20,16 +23,34 @@ Route::get('/dashboard', function () {
     return view('dashboard', compact('tasks'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
 Route::middleware('auth')->group(function () {
 
     // Task Routes
-    Route::get('/teams', [ProjectMemberController::class, 'index'])->name('team.index');
-    Route::resource('milestones', \App\Http\Controllers\WebMilestoneController::class);
+    Route::resource('tasks', TaskController::class);
 
-    Route::view('/time-logs', 'timelogs.index')->name('timelogs.index');
+    Route::post('/tasks/{task}/assign',
+        [TaskAssignmentController::class, 'store']
+    );
+
+    Route::delete('/task-assignment/{assignment}',
+        [TaskAssignmentController::class, 'destroy']
+    );
+
+
+    // Teams Routes
+    Route::get('/teams',
+        [ProjectMemberController::class, 'index']
+    )->name('team.index');
+
+
+    // Milestone Routes
+    Route::resource('milestones', WebMilestoneController::class);
+
 
     // Project routes
     Route::resource('projects', ProjectController::class);
+
 
     // Project Member (Teams) Routes
     Route::get('/projects/{project}/members',
@@ -48,6 +69,7 @@ Route::middleware('auth')->group(function () {
         [ProjectMemberController::class, 'destroy']
     );
 
+
     // Profile Routes
     Route::get('/profile',
         [ProfileController::class, 'edit']
@@ -60,26 +82,41 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile',
         [ProfileController::class, 'destroy']
     )->name('profile.destroy');
+
+
+    // Time Log Routes
+    Route::get('/time-logs',
+        [TimeLogController::class, 'index']
+    )->name('timelogs.index');
+
+    Route::post('/tasks/{task}/time-logs',
+        [TimeLogController::class, 'store']
+    )->name('timelogs.store');
+
 });
-    
+
+
 // Admin Routes
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
 
-    Route::get('/dashboard', function () {
-        return "Welcome to the Admin Dashboard! Only Role 1 can see this.";
-        // We will replace this with a real Blade view later
-    })->name('dashboard');
+        Route::get('/dashboard', function () {
+            return "Welcome to the Admin Dashboard! Only Role 1 can see this.";
+            // We will replace this with a real Blade view later
+        })->name('dashboard');
 
-    // Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
-    // Route::get('/users', [UserController::class, 'index'])->name('users.index');
 
-    Route::resource('users', UserController::class)
-    ->only([
-        'index',
-        'show',
-        'update',
-        'destroy'
-    ]);
-});
+        Route::resource('users', UserController::class)
+        ->only([
+            'index',
+            'show',
+            'update',
+            'destroy'
+        ]);
+
+    });
+
 
 require __DIR__.'/auth.php';
