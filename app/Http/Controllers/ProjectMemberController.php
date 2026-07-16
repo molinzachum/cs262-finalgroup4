@@ -9,8 +9,10 @@ use Illuminate\Http\Request;
 class ProjectMemberController extends Controller
 {
     // Show all members in a project
- public function index(Request $request, Project $project)
+ public function index(Request $request)
 {
+    $project = Project::firstOrFail();
+
     $search = $request->search;
 
     $members = $project->members()
@@ -29,8 +31,11 @@ class ProjectMemberController extends Controller
         })
         ->get();
 
-
-    return view('team.index', compact('project', 'members', 'search'));
+    return view('team.index', compact(
+        'project',
+        'members',
+        'search'
+    ));
 }
 
     // Add member to project

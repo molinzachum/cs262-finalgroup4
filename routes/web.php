@@ -25,6 +25,11 @@ Route::middleware('auth')->group(function () {
     // Task Routes
     Route::resource('tasks', TaskController::class);
 
+    Route::view('/teams', 'team.index')
+    ->name('team.index');
+
+Route::view('/milestones', 'milestones.index')
+    ->name('milestones.index');
     Route::post('/tasks/{task}/assign',
         [TaskAssignmentController::class, 'store']
     );
